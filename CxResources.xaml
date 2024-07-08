@@ -1,0 +1,51 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="CxGreen">#00b050</Color>
+    <Color x:Key="CxBlue">#0070c0</Color>
+    <Color x:Key="CxRed">#ff0000</Color>
+    <Color x:Key="CxOrange">#e55319</Color>
+    <Color x:Key="CxTeal">#007070</Color>
+
+    <Color x:Key="CxDarkGreen">#185c37</Color>
+    <Color x:Key="CxDarkBlue">#153d64</Color>
+    <Color x:Key="CxDarkRed">#ac0000</Color>
+    <Color x:Key="CxDarkOrange">#c14615</Color>
+    <Color x:Key="CxDarkTeal">#003c3c</Color>
+
+    <Color x:Key="CxLightGreen">#8ed973</Color>
+    <Color x:Key="CxLightBlue">#0f9ed5</Color>
+    <Color x:Key="CxLightRed">#ff4f4f</Color>
+    <Color x:Key="CxLightOrange">#e96733</Color>
+
+    <Color x:Key="CxDark">#0a0c0d</Color>
+    <Color x:Key="CxLight">#f3f3f3</Color>
+
+    <SolidColorBrush x:Key="SolidBrushGreen" Color="{StaticResource CxGreen}"/>
+    <SolidColorBrush x:Key="SolidBrushBlue" Color="{StaticResource CxBlue}"/>
+    <SolidColorBrush x:Key="SolidBrushRed" Color="{StaticResource CxRed}"/>
+    <SolidColorBrush x:Key="SolidBrushOrange" Color="{StaticResource CxOrange}"/>
+    <SolidColorBrush x:Key="SolidBrushTeal" Color="{StaticResource CxTeal}"/>
+    
+    <SolidColorBrush x:Key="SolidBrushDarkGreen" Color="{StaticResource CxDarkGreen}"/>
+    <SolidColorBrush x:Key="SolidBrushDarkBlue" Color="{StaticResource CxDarkBlue}"/>
+    <SolidColorBrush x:Key="SolidBrushDarkRed" Color="{StaticResource CxDarkRed}"/>
+    <SolidColorBrush x:Key="SolidBrushDarkOrange" Color="{StaticResource CxDarkOrange}"/>
+    <SolidColorBrush x:Key="SolidBrushDarkTeal" Color="{StaticResource CxDarkTeal}"/>
+
+    <SolidColorBrush x:Key="SolidBrushLightGreen" Color="{StaticResource CxLightGreen}"/>
+    <SolidColorBrush x:Key="SolidBrushLightBlue" Color="{StaticResource CxLightBlue}"/>
+    <SolidColorBrush x:Key="SolidBrushLightRed" Color="{StaticResource CxLightRed}"/>
+    <SolidColorBrush x:Key="SolidBrushLightOrange" Color="{StaticResource CxLightOrange}"/>
+    
+    <SolidColorBrush x:Key="SolidBrushDark" Color="{StaticResource CxDark}"/>
+    <SolidColorBrush x:Key="SolidBrushLight" Color="{StaticResource CxLight}"/>
+
+    <Style x:Key="DataErrorStyle" TargetType="TextBox">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="True"/>
+        </Style.Triggers>
+        <Setter Property="Foreground" Value="{StaticResource SolidBrushDarkRed}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+</ResourceDictionary>
