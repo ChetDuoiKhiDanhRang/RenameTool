@@ -40,12 +40,12 @@
     <SolidColorBrush x:Key="SolidBrushDark" Color="{StaticResource CxDark}"/>
     <SolidColorBrush x:Key="SolidBrushLight" Color="{StaticResource CxLight}"/>
 
-    <Style x:Key="DataErrorStyle" TargetType="TextBox">
+    <Style x:Key="InvalidedTextBox" TargetType="TextBox">
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="True"/>
         </Style.Triggers>
         <Setter Property="Foreground" Value="{StaticResource SolidBrushDarkRed}"/>
         <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
     </Style>
-
 </ResourceDictionary>

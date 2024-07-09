@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:RenameTool"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="CxResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Image x:Key="WindowIcon" Source="\imgs\icon.png"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

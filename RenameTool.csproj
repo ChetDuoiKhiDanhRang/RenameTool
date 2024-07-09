@@ -2,11 +2,15 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="imgs\ico.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="BaseTools">
@@ -15,6 +19,10 @@
     <Reference Include="WinAPIWrapper">
       <HintPath>..\CxxLibs\WinAPIWrapper\bin\Debug\netstandard2.1\WinAPIWrapper.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="imgs\ico.ico" />
   </ItemGroup>
 
   <ItemGroup>
