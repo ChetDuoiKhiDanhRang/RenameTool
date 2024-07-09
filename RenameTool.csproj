@@ -8,4 +8,13 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="BaseTools">
+      <HintPath>..\CxxLibs\BaseTools\bin\Debug\netstandard2.1\BaseTools.dll</HintPath>
+    </Reference>
+    <Reference Include="WinAPIWrapper">
+      <HintPath>..\CxxLibs\WinAPIWrapper\bin\Debug\netstandard2.1\WinAPIWrapper.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
