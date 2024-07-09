@@ -14,6 +14,12 @@ using System.Windows.Shapes;
 
 namespace RenameTool
 {
+    public enum NameOrExtension
+    {
+        NameOnly,
+        ExtensionOnly,
+        NameAndExtension
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -28,7 +34,9 @@ namespace RenameTool
         public string SearchPattern
         {
             get { return searchPattern; }
-            set { searchPattern = value;
+            set
+            {
+                searchPattern = value;
                 ValidateSearchPattern();
                 OnPropertyChanged(nameof(SearchPattern));
             }
@@ -36,6 +44,7 @@ namespace RenameTool
         private void ValidateSearchPattern()
         {
             errors.Remove(nameof(SearchPattern));
+            if (UseRegex) return;
             try
             {
                 Regex reg = new Regex(searchPattern);
@@ -47,23 +56,32 @@ namespace RenameTool
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(SearchPattern)));
         }
 
-        private string replaceTo;
-        public string ReplaceTo
+        private string replaceWith;
+        public string ReplaceWith
         {
-            get { return replaceTo; }
-            set { replaceTo = value; ValidateReplaceTo(); OnPropertyChanged(nameof(ReplaceTo)); }
+            get { return replaceWith; }
+            set { replaceWith = value; ValidateReplaceTo(); OnPropertyChanged(nameof(ReplaceWith)); }
         }
         private void ValidateReplaceTo()
         {
-            errors.Remove($"{nameof(ReplaceTo)}");
+            errors.Remove($"{nameof(ReplaceWith)}");
             var illegalChar_name = System.IO.Path.GetInvalidFileNameChars();
             var illegalChar_path = System.IO.Path.GetInvalidPathChars();
-            if (ReplaceTo.IndexOfAny(illegalChar_name)>=0 || ReplaceTo.IndexOfAny(illegalChar_path) >=0)
+            if (ReplaceWith.IndexOfAny(illegalChar_name) >= 0 || ReplaceWith.IndexOfAny(illegalChar_path) >= 0)
             {
-                errors[nameof(ReplaceTo)] = new List<string> { $"Illegel chars: {illegalChar_name}" };
+                errors[nameof(ReplaceWith)] = new List<string> { $"Illegel chars: {illegalChar_name}" };
             }
-            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(ReplaceTo)));
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(ReplaceWith)));
         }
+
+        private bool useRegex;
+
+        public bool UseRegex
+        {
+            get { return useRegex; }
+            set { useRegex = value; ValidateSearchPattern(); OnPropertyChanged(nameof(UseRegex)); }
+        }
+
 
         private bool caseSensitive;
 
@@ -88,6 +106,13 @@ namespace RenameTool
             set { toBaseASCII = value; OnPropertyChanged(nameof(ToBaseASCII)); }
         }
 
+        private NameOrExtension targetPart;
+
+        public NameOrExtension TargetPart
+        {
+            get { return targetPart; }
+            set { targetPart = value; OnPropertyChanged(nameof(TargetPart)); }
+        }
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -108,5 +133,31 @@ namespace RenameTool
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public Dictionary<string, List<string>> errors { get; set; } = new Dictionary<string, List<string>>();
+
+        private void SaveSettings()
+        {
+            var x = Properties.Settings.Default;
+            x.UseRegex = UseRegex;
+            x.SearchPattern = SearchPattern;
+            x.ReplaceWith = ReplaceWith;
+            x.CaseSensitive = CaseSensitive;
+            x.TargetPart = (int)TargetPart;
+            x.RemoveJunkSpace = RemoveJunkSpace;
+            x.ToBaseASCII = ToBaseASCII;
+            x.Save();
+        }
+
+        private void LoadSettings()
+        {
+            var x = Properties.Settings.Default;
+            UseRegex = x.UseRegex;
+            SearchPattern = x.SearchPattern;
+            ReplaceWith = x.ReplaceWith;
+            CaseSensitive = x.CaseSensitive;
+            TargetPart = (NameOrExtension)x.TargetPart;
+            RemoveJunkSpace = x.RemoveJunkSpace;
+            ToBaseASCII = x.ToBaseASCII;
+            
+        }
     }
 }
