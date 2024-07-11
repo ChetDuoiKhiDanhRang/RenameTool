@@ -35,8 +35,8 @@ namespace RenameTool.ViewModel
         public bool HasErrors => _errors.Any();
         public IEnumerable GetErrors(string? propertyName)
         {
-            if (string.IsNullOrEmpty(propertyName)) return null;
-            return _errors[propertyName];
+            if (string.IsNullOrEmpty(propertyName) || !_errors.TryGetValue(propertyName, out List<string>? _value)) return null;
+            return _value;
         }
         //------------
         Dictionary<string, List<string>> _errors = new Dictionary<string, List<string>>();

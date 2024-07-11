@@ -106,5 +106,29 @@ namespace RenameTool.Properties {
                 this["ToBaseASCII"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SwitchCases {
+            get {
+                return ((int)(this["SwitchCases"]));
+            }
+            set {
+                this["SwitchCases"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IgnoreCase {
+            get {
+                return ((bool)(this["IgnoreCase"]));
+            }
+            set {
+                this["IgnoreCase"] = value;
+            }
+        }
     }
 }

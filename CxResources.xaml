@@ -8,7 +8,7 @@
 
     <Color x:Key="CxDarkGreen">#185c37</Color>
     <Color x:Key="CxDarkBlue">#153d64</Color>
-    <Color x:Key="CxDarkRed">#ac0000</Color>
+    <Color x:Key="CxDarkRed">#c00000</Color>
     <Color x:Key="CxDarkOrange">#c14615</Color>
     <Color x:Key="CxDarkTeal">#003c3c</Color>
 
@@ -25,7 +25,7 @@
     <SolidColorBrush x:Key="SolidBrushRed" Color="{StaticResource CxRed}"/>
     <SolidColorBrush x:Key="SolidBrushOrange" Color="{StaticResource CxOrange}"/>
     <SolidColorBrush x:Key="SolidBrushTeal" Color="{StaticResource CxTeal}"/>
-    
+
     <SolidColorBrush x:Key="SolidBrushDarkGreen" Color="{StaticResource CxDarkGreen}"/>
     <SolidColorBrush x:Key="SolidBrushDarkBlue" Color="{StaticResource CxDarkBlue}"/>
     <SolidColorBrush x:Key="SolidBrushDarkRed" Color="{StaticResource CxDarkRed}"/>
@@ -36,7 +36,7 @@
     <SolidColorBrush x:Key="SolidBrushLightBlue" Color="{StaticResource CxLightBlue}"/>
     <SolidColorBrush x:Key="SolidBrushLightRed" Color="{StaticResource CxLightRed}"/>
     <SolidColorBrush x:Key="SolidBrushLightOrange" Color="{StaticResource CxLightOrange}"/>
-    
+
     <SolidColorBrush x:Key="SolidBrushDark" Color="{StaticResource CxDark}"/>
     <SolidColorBrush x:Key="SolidBrushLight" Color="{StaticResource CxLight}"/>
 
@@ -48,4 +48,34 @@
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
     </Style>
+
+    <ControlTemplate x:Key="InputTemplate">
+        <Border Margin="5"        
+                VerticalAlignment="Top"
+                CornerRadius="5"
+                Background="{StaticResource SolidBrushBlue}">
+            <DockPanel VerticalAlignment="Stretch"
+                       Margin="3,3,3,3">
+                <Label Background="Transparent"
+                       Content="Search pattern"
+                       Foreground="{StaticResource SolidBrushLight}"
+                       VerticalContentAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"/>
+                <Border CornerRadius="0,3,3,0" 
+                        VerticalAlignment="Stretch"
+                        Background="{StaticResource SolidBrushLight}">
+                    <TextBox VerticalContentAlignment="Center"
+                             VerticalAlignment="Stretch"
+                             Background="Transparent"
+                             BorderBrush="Transparent"
+                             BorderThickness="0"
+                             AcceptsReturn="False"
+                             Style="{StaticResource InvalidedTextBox}"
+                             />
+                </Border>
+            </DockPanel>
+        </Border>
+    </ControlTemplate>
+
 </ResourceDictionary>

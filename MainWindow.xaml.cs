@@ -20,6 +20,15 @@ namespace RenameTool
         ExtensionOnly,
         NameAndExtension
     }
+
+    public enum TextFormattings
+    {
+        None,
+        LowerCase,
+        UpperCase,
+        TitleCase
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -30,12 +39,17 @@ namespace RenameTool
             InitializeComponent();
         }
 
+        int cou = 0;
+        public int Cou { get => cou; set => cou = value; }
+
+
+
         private string searchPattern;
         public string SearchPattern
         {
             get { return searchPattern; }
             set
-            {
+           {
                 searchPattern = value;
                 ValidateSearchPattern();
                 OnPropertyChanged(nameof(SearchPattern));
@@ -44,15 +58,18 @@ namespace RenameTool
         private void ValidateSearchPattern()
         {
             errors.Remove(nameof(SearchPattern));
-            if (UseRegex) return;
-            try
+            if (UseRegex)
             {
-                Regex reg = new Regex(searchPattern);
+                try
+                {
+                    Regex reg = new Regex(SearchPattern);
+                }
+                catch (Exception e)
+                {
+                    errors[nameof(SearchPattern)] = new List<string> { $"error pattern: {e.Message}" };
+                }
             }
-            catch (Exception e)
-            {
-                errors[nameof(SearchPattern)] = new List<string> { $"Error pattern: {e.Message}" };
-            }
+            
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(SearchPattern)));
         }
 
@@ -60,16 +77,16 @@ namespace RenameTool
         public string ReplaceWith
         {
             get { return replaceWith; }
-            set { replaceWith = value; ValidateReplaceTo(); OnPropertyChanged(nameof(ReplaceWith)); }
+            set { replaceWith = value; ValidateReplaceWith(); OnPropertyChanged(nameof(ReplaceWith)); }
         }
-        private void ValidateReplaceTo()
+        private void ValidateReplaceWith()
         {
-            errors.Remove($"{nameof(ReplaceWith)}");
+            errors.Remove(nameof(ReplaceWith));
             var illegalChar_name = System.IO.Path.GetInvalidFileNameChars();
             var illegalChar_path = System.IO.Path.GetInvalidPathChars();
             if (ReplaceWith.IndexOfAny(illegalChar_name) >= 0 || ReplaceWith.IndexOfAny(illegalChar_path) >= 0)
             {
-                errors[nameof(ReplaceWith)] = new List<string> { $"Illegel chars: {illegalChar_name}" };
+                errors[nameof(ReplaceWith)] = new List<string> { $"illegal character!" };
             }
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(ReplaceWith)));
         }
@@ -114,6 +131,21 @@ namespace RenameTool
             set { targetPart = value; OnPropertyChanged(nameof(TargetPart)); }
         }
 
+        private TextFormattings switchCases;
+
+        public TextFormattings SwitchCases
+        {
+            get { return switchCases; }
+            set { switchCases = value; OnPropertyChanged(nameof(SwitchCases)); }
+        }
+
+        private bool ignoreCase;
+
+        public bool IgnoreCase
+        {
+            get { return ignoreCase; }
+            set { ignoreCase = value; ValidateSearchPattern(); OnPropertyChanged(nameof(IgnoreCase)); }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -121,7 +153,7 @@ namespace RenameTool
 
         public IEnumerable GetErrors(string? propertyName)
         {
-            if (string.IsNullOrWhiteSpace(propertyName))
+            if (string.IsNullOrWhiteSpace(propertyName) || (errors.Count == 0) || !errors.ContainsKey(propertyName))
             {
                 return null;
             }
@@ -137,11 +169,13 @@ namespace RenameTool
         private void SaveSettings()
         {
             var x = Properties.Settings.Default;
-            x.UseRegex = UseRegex;
             x.SearchPattern = SearchPattern;
+            x.UseRegex = UseRegex;
+            x.IgnoreCase = IgnoreCase;
             x.ReplaceWith = ReplaceWith;
             x.CaseSensitive = CaseSensitive;
             x.TargetPart = (int)TargetPart;
+            x.SwitchCases = (int)SwitchCases;
             x.RemoveJunkSpace = RemoveJunkSpace;
             x.ToBaseASCII = ToBaseASCII;
             x.Save();
@@ -150,14 +184,26 @@ namespace RenameTool
         private void LoadSettings()
         {
             var x = Properties.Settings.Default;
-            UseRegex = x.UseRegex;
             SearchPattern = x.SearchPattern;
+            UseRegex = x.UseRegex;
+            IgnoreCase = x.IgnoreCase;
             ReplaceWith = x.ReplaceWith;
             CaseSensitive = x.CaseSensitive;
             TargetPart = (NameOrExtension)x.TargetPart;
             RemoveJunkSpace = x.RemoveJunkSpace;
             ToBaseASCII = x.ToBaseASCII;
-            
+            SwitchCases = (TextFormattings)x.SwitchCases;
+
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadSettings();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            SaveSettings();
         }
     }
 }

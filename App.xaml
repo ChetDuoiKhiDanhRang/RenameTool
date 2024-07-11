@@ -8,7 +8,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="CxResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <Image x:Key="WindowIcon" Source="\imgs\icon.png"/>
+            <Image x:Key="FileIcon" Source=".\imgs\file.png"/>
+            <Image x:Key="FolderIcon" Source=".\imgs\folder.png"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
