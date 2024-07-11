@@ -62,7 +62,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="6"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -76,11 +76,11 @@
         </Border>
 
         <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
-                Background="{StaticResource SolidBrushDarkGreen}"
+                Background="{StaticResource SolidBrushTeal}"
                 Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
         </Border>
         <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
-                Background="{StaticResource SolidBrushDarkGreen}"
+                Background="{StaticResource SolidBrushTeal}"
                 Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="2">
         </Border>
 
