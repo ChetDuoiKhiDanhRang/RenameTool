@@ -38,18 +38,13 @@
                     <ControlTemplate>
                         <Border>
                             <AdornedElementPlaceholder x:Name="adn" />
-                            <!--<TextBlock Foreground="{StaticResource SolidBrushDarkRed}"
-                                   FontSize="10"
-                                   FontWeight="Medium"
-                                   FontStyle="Italic"
-                                   Text="{Binding ElementName=adn, Path=(Validation.Errors)[0].ErrorContent}"/>-->
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <Style TargetType="Label">
-            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -60,31 +55,33 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="15"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Border CornerRadius="5,5,0,5" Margin="3,3,0,0" 
-                Background="{StaticResource SolidBrushTeal}"
+        <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
+                Background="{StaticResource SolidBrushBlue}"
                 Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
         </Border>
         <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
-                Background="{StaticResource SolidBrushTeal}"
+                Background="{StaticResource SolidBrushBlue}"
                 Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
         </Border>
 
-        <Border CornerRadius="5,5,0,5" Margin="3,3,0,0" 
-                Background="{StaticResource SolidBrushTeal}"
-                Grid.Column="0" Grid.Row="3" Grid.RowSpan="2">
+        <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
+                Background="{StaticResource SolidBrushDarkGreen}"
+                Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
         </Border>
         <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
-                Background="{StaticResource SolidBrushTeal}"
-                Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2">
+                Background="{StaticResource SolidBrushDarkGreen}"
+                Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="2">
         </Border>
 
         <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -92,41 +89,43 @@
                Grid.Row="0" Grid.Column="0"/>
         <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
                Content="Replace with" VerticalContentAlignment="Center"
-               Grid.Row="3" Grid.Column="0"/>
+               Grid.Row="0" Grid.Column="3"/>
 
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
             <CheckBox Grid.Row="0" Grid.Column="1"
-                  x:Name="ckbUseRegex" IsChecked="{Binding UseRegex}"
-                  VerticalAlignment="Stretch"
-                  HorizontalAlignment="Right"
-                  VerticalContentAlignment="Center"
-                  FontWeight="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"
-                  Margin="0,0,8,0"
-                  Content="Use Regex"/>
+                      x:Name="ckbUseRegex" IsChecked="{Binding UseRegex}"
+                      VerticalAlignment="Stretch"
+                      Foreground="{StaticResource SolidBrushBlue}"
+                      HorizontalAlignment="Right"
+                      VerticalContentAlignment="Center"
+                      FontWeight="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"
+                      Margin="0,0,8,0"
+                      Content="Use Regex"/>
 
             <CheckBox Grid.Row="0" Grid.Column="1"
-                  x:Name="ckbIgnoreCase" IsChecked="{Binding IgnoreCase}"
-                  VerticalAlignment="Stretch"
-                  HorizontalAlignment="Right"
-                  VerticalContentAlignment="Center"
-                  FontWeight="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"
-                  Margin="0,0,8,0"
-                  Content="Ignore case"/>
+                      x:Name="ckbIgnoreCase" IsChecked="{Binding IgnoreCase}"
+                      VerticalAlignment="Stretch"
+                      Foreground="{StaticResource SolidBrushBlue}"
+                      HorizontalAlignment="Right"
+                      VerticalContentAlignment="Center"
+                      FontWeight="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"
+                      Margin="0,0,8,0"
+                      Content="Ignore case"/>
         </StackPanel>
 
-        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                   Grid.Row="0" Grid.Column="1"
-                   Margin="5,0,0,3"
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                   Margin="3,3,3,5"
                    Foreground="{StaticResource SolidBrushDarkRed}"
-                   FontStyle="Italic" FontSize="10" FontWeight="Bold"
+                   FontStyle="Italic" FontSize="10" FontWeight="SemiBold"
                    Visibility="{Binding ElementName=txbSearchPattern, Path=(Validation.HasError), Converter={StaticResource Bool2Visibility}}"
                    Text="{Binding ElementName=txbSearchPattern, Path=(Validation.Errors)[0].ErrorContent}"/>
 
-        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                   Grid.Row="3" Grid.Column="1"
-                   Margin="5,0,0,3"
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
+                   Margin="3,3,3,5"
                    Foreground="{StaticResource SolidBrushDarkRed}"
-                   FontSize="10" FontStyle="Italic" FontWeight="Bold"
+                   FontSize="10" FontStyle="Italic" FontWeight="SemiBold"
                    Visibility="{Binding ElementName=txbReplaceWith, Path=(Validation.HasError), Converter={StaticResource Bool2Visibility}}"
                    Text="{Binding ElementName=txbReplaceWith, Path=(Validation.Errors)[0].ErrorContent}"/>
         <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
@@ -138,11 +137,16 @@
         </Border>
 
         <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
-                Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4"
+                Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1"
                 VerticalAlignment="Top" Background="{StaticResource SolidBrushLight}">
             <TextBox x:Name="txbReplaceWith" HorizontalContentAlignment="Center" 
                      Style="{StaticResource invalidTextBox}"
                      Text="{Binding ReplaceWith, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+        </Border>
+
+        <Border Grid.Row="3" Background="BlanchedAlmond" 
+                Grid.Column="0" Height="300" Grid.ColumnSpan="5">
+
         </Border>
 
 

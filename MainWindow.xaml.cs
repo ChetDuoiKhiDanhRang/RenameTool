@@ -66,7 +66,7 @@ namespace RenameTool
                 }
                 catch (Exception e)
                 {
-                    errors[nameof(SearchPattern)] = new List<string> { $"error pattern: {e.Message}" };
+                    errors[nameof(SearchPattern)] = new List<string> { $"{e.Message}" };
                 }
             }
             
