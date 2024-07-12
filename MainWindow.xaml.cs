@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -42,6 +43,21 @@ namespace RenameTool
         int cou = 0;
         public int Cou { get => cou; set => cou = value; }
 
+        public List<string> ListTextFormattings
+        {
+            get
+            {
+                return new List<string> { "Keep original", "lower case", "UPPER CASE", "Title Case" };
+            }
+        }
+
+        public List<string> ListTargetParts
+        {
+            get
+            {
+                return new List<string> { "Name", "Name + Extension", "Extension" };
+            }
+        }
 
 
         private string searchPattern;
@@ -49,7 +65,7 @@ namespace RenameTool
         {
             get { return searchPattern; }
             set
-           {
+            {
                 searchPattern = value;
                 ValidateSearchPattern();
                 OnPropertyChanged(nameof(SearchPattern));
@@ -69,7 +85,7 @@ namespace RenameTool
                     errors[nameof(SearchPattern)] = new List<string> { $"{e.Message}" };
                 }
             }
-            
+
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(SearchPattern)));
         }
 
@@ -99,14 +115,15 @@ namespace RenameTool
             set { useRegex = value; ValidateSearchPattern(); OnPropertyChanged(nameof(UseRegex)); }
         }
 
+        private bool includeChildItems;
 
-        private bool caseSensitive;
-
-        public bool CaseSensitive
+        public bool IncludeChildItems
         {
-            get { return caseSensitive; }
-            set { caseSensitive = value; OnPropertyChanged(nameof(CaseSensitive)); }
+            get { return includeChildItems; }
+            set { includeChildItems = value; OnPropertyChanged(nameof(IncludeChildItems)); }
         }
+
+
 
         private bool removeJunkSpace;
         public bool RemoveJunkSpace
@@ -173,11 +190,9 @@ namespace RenameTool
             x.UseRegex = UseRegex;
             x.IgnoreCase = IgnoreCase;
             x.ReplaceWith = ReplaceWith;
-            x.CaseSensitive = CaseSensitive;
-            x.TargetPart = (int)TargetPart;
-            x.SwitchCases = (int)SwitchCases;
             x.RemoveJunkSpace = RemoveJunkSpace;
             x.ToBaseASCII = ToBaseASCII;
+            x.IncludeChildItems = IncludeChildItems;
             x.Save();
         }
 
@@ -187,13 +202,12 @@ namespace RenameTool
             SearchPattern = x.SearchPattern;
             UseRegex = x.UseRegex;
             IgnoreCase = x.IgnoreCase;
+            IncludeChildItems = x.IncludeChildItems;
             ReplaceWith = x.ReplaceWith;
-            CaseSensitive = x.CaseSensitive;
             TargetPart = (NameOrExtension)x.TargetPart;
             RemoveJunkSpace = x.RemoveJunkSpace;
             ToBaseASCII = x.ToBaseASCII;
             SwitchCases = (TextFormattings)x.SwitchCases;
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

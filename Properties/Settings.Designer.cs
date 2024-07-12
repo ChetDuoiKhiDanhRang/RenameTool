@@ -61,25 +61,13 @@ namespace RenameTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int TargetPart {
             get {
                 return ((int)(this["TargetPart"]));
             }
             set {
                 this["TargetPart"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CaseSensitive {
-            get {
-                return ((bool)(this["CaseSensitive"]));
-            }
-            set {
-                this["CaseSensitive"] = value;
             }
         }
         
@@ -128,6 +116,18 @@ namespace RenameTool.Properties {
             }
             set {
                 this["IgnoreCase"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IncludeChildItems {
+            get {
+                return ((bool)(this["IncludeChildItems"]));
+            }
+            set {
+                this["IncludeChildItems"] = value;
             }
         }
     }

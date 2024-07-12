@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RenameTool"
         xmlns:assistClasses="clr-namespace:RenameTool.AssistClasses"
         mc:Ignorable="d"
-        Title="RenameTool" Height="450" Width="800"
+        Title="RenameTool" Height="600" Width="1024"
         Icon="imgs\ico.ico"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         FontSize="12"
@@ -16,6 +16,16 @@
     <Window.Resources>
         <assistClasses:Bool2Visibility x:Key="Bool2Visibility"/>
         <assistClasses:Bool2FontWeight x:Key="Bool2FontWeight"/>
+        <assistClasses:TextFormatting2String x:Key="TextFormatting2String"/>
+        <assistClasses:TargetPart2String x:Key="TargetPart2String"/>
+        <Style x:Key="AutoBoldCheckBox" TargetType="CheckBox">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <!--<Setter Property="FontWeight" Value="{Binding Source={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"/>-->
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="invalidTextBox" TargetType="TextBox">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
@@ -51,69 +61,68 @@
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="6"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
+    <DockPanel LastChildFill="True">
+        <Grid DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
                 Background="{StaticResource SolidBrushBlue}"
                 Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
-        </Border>
-        <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
+            </Border>
+            <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
                 Background="{StaticResource SolidBrushBlue}"
                 Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
-        </Border>
+            </Border>
 
-        <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
+            <Border CornerRadius="5,5,0,5" Margin="3,3,3,0" 
                 Background="{StaticResource SolidBrushTeal}"
                 Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
-        </Border>
-        <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
+            </Border>
+            <Border CornerRadius="0,5,5,5" Margin="3,0,3,0" 
                 Background="{StaticResource SolidBrushTeal}"
                 Grid.Column="3" Grid.Row="1" Grid.ColumnSpan="2">
-        </Border>
+            </Border>
 
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
                Content="Search pattern" VerticalContentAlignment="Center"
                Grid.Row="0" Grid.Column="0"/>
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
                Content="Replace with" VerticalContentAlignment="Center"
                Grid.Row="0" Grid.Column="3"/>
 
-        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-            <CheckBox Grid.Row="0" Grid.Column="1"
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                <CheckBox Grid.Row="0" Grid.Column="1"
                       x:Name="ckbUseRegex" IsChecked="{Binding UseRegex}"
                       VerticalAlignment="Stretch"
                       Foreground="{StaticResource SolidBrushBlue}"
+                      Style="{StaticResource AutoBoldCheckBox}"                        
                       HorizontalAlignment="Right"
                       VerticalContentAlignment="Center"
-                      FontWeight="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"
                       Margin="0,0,8,0"
                       Content="Use Regex"/>
 
-            <CheckBox Grid.Row="0" Grid.Column="1"
-                      x:Name="ckbIgnoreCase" IsChecked="{Binding IgnoreCase}"
-                      VerticalAlignment="Stretch"
-                      Foreground="{StaticResource SolidBrushBlue}"
-                      HorizontalAlignment="Right"
-                      VerticalContentAlignment="Center"
-                      FontWeight="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, Converter={StaticResource Bool2FontWeight}}"
-                      Margin="0,0,8,0"
-                      Content="Ignore case"/>
-        </StackPanel>
+                <CheckBox Grid.Row="0" Grid.Column="1"
+                          x:Name="ckbIgnoreCase" IsChecked="{Binding IgnoreCase}"
+                          VerticalAlignment="Stretch"
+                          Foreground="{StaticResource SolidBrushBlue}"
+                          Style="{StaticResource AutoBoldCheckBox}"                        
+                          HorizontalAlignment="Right"
+                          VerticalContentAlignment="Center"
+                          Margin="0,0,8,0"
+                          Content="Ignore case"/>
+            </StackPanel>
 
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                    Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                    Margin="3,3,3,5"
                    Foreground="{StaticResource SolidBrushDarkRed}"
@@ -121,34 +130,77 @@
                    Visibility="{Binding ElementName=txbSearchPattern, Path=(Validation.HasError), Converter={StaticResource Bool2Visibility}}"
                    Text="{Binding ElementName=txbSearchPattern, Path=(Validation.Errors)[0].ErrorContent}"/>
 
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                    Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2"
                    Margin="3,3,3,5"
                    Foreground="{StaticResource SolidBrushDarkRed}"
                    FontSize="10" FontStyle="Italic" FontWeight="SemiBold"
                    Visibility="{Binding ElementName=txbReplaceWith, Path=(Validation.HasError), Converter={StaticResource Bool2Visibility}}"
                    Text="{Binding ElementName=txbReplaceWith, Path=(Validation.Errors)[0].ErrorContent}"/>
-        <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
+            <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
                 Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
                 VerticalAlignment="Top" Background="{StaticResource SolidBrushLight}">
-            <TextBox x:Name="txbSearchPattern" HorizontalContentAlignment="Center"
-                     Style="{StaticResource invalidTextBox}"
-                     Text="{Binding SearchPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
-        </Border>
+                <TextBox x:Name="txbSearchPattern" HorizontalContentAlignment="Center"
+                         CaretBrush="{StaticResource SolidBrushBlue}"
+                         Style="{StaticResource invalidTextBox}"
+                         Text="{Binding SearchPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+            </Border>
 
-        <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
+            <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
                 Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1"
                 VerticalAlignment="Top" Background="{StaticResource SolidBrushLight}">
-            <TextBox x:Name="txbReplaceWith" HorizontalContentAlignment="Center" 
+                <TextBox x:Name="txbReplaceWith" HorizontalContentAlignment="Center"
+                         CaretBrush="{StaticResource SolidBrushDarkTeal}"
                      Style="{StaticResource invalidTextBox}"
                      Text="{Binding ReplaceWith, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+            </Border>
+        </Grid>
+
+        <Grid DockPanel.Dock="Bottom" Height="32" Background="AntiqueWhite"></Grid>
+
+        <StackPanel Grid.Column="0" Margin="3" DockPanel.Dock="Left" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Margin="3,0,0,5" Height="Auto">
+                <Label Name="lblTextFormatting" Content="Text format:" Foreground="{StaticResource SolidBrushDark}"/>
+                <ComboBox Name="cmbSwitchCase" 
+                              Foreground="{StaticResource SolidBrushDark}" 
+                              FontWeight="SemiBold"
+                              VerticalContentAlignment="Center"
+                              VerticalAlignment="Center"
+                              Width="{Binding ElementName=cmbTargetPart, Path=ActualWidth}"
+                              ItemsSource="{Binding ListTextFormattings}"
+                              SelectedItem="{Binding SwitchCases, Converter={StaticResource TextFormatting2String}}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="3,0,0,5" Height="Auto">
+                <Label Content="Target part:" 
+                           Width="{Binding ElementName=lblTextFormatting, Path=ActualWidth}"
+                           Foreground="{StaticResource SolidBrushDark}"/>
+                <ComboBox Name="cmbTargetPart" 
+                              Foreground="{StaticResource SolidBrushDark}" 
+                              FontWeight="SemiBold"
+                              VerticalContentAlignment="Center"
+                              VerticalAlignment="Center"
+                              Width="130"
+                              ItemsSource="{Binding ListTargetParts}"
+                              SelectedItem="{Binding TargetPart, Converter={StaticResource TargetPart2String}}"/>
+            </StackPanel>
+
+            <CheckBox x:Name="ckbRemoveJunkSpaces" 
+                   Style="{StaticResource AutoBoldCheckBox}"
+                   Margin="3,3,3,5" IsChecked="{Binding RemoveJunkSpace}" 
+                   Content="Remove junk spaces" Background="Transparent"/>
+            <CheckBox x:Name="ckbChildItems" 
+                   Style="{StaticResource AutoBoldCheckBox}"
+                   Margin="3,3,3,5" IsChecked="{Binding IncludeChildItems}" 
+                   Content="Include child items" Background="Transparent"/>
+            <CheckBox Margin="3,3,3,5" IsChecked="{Binding ToBaseASCII}" 
+                   x:Name="ckbToBaseASCII"
+                   Style="{StaticResource AutoBoldCheckBox}"
+                   Content="Có dấu → Khong dau" Background="Transparent"/>
+        </StackPanel>
+        <Border BorderBrush="{StaticResource SolidBrushDark}"
+                BorderThickness="1"
+                Margin="3" CornerRadius="5">
+
         </Border>
-
-        <Border Grid.Row="3" Background="BlanchedAlmond" 
-                Grid.Column="0" Height="300" Grid.ColumnSpan="5">
-
-        </Border>
-
-
-    </Grid>
+    </DockPanel>
 </Window>
