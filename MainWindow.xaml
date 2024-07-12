@@ -196,11 +196,80 @@
                    x:Name="ckbToBaseASCII"
                    Style="{StaticResource AutoBoldCheckBox}"
                    Content="Có dấu → Khong dau" Background="Transparent"/>
+            <Button Background="DeepSkyBlue" Content="ACFFD" Click="Button_Click"/>
         </StackPanel>
-        <Border BorderBrush="{StaticResource SolidBrushDark}"
-                BorderThickness="1"
-                Margin="3" CornerRadius="5">
 
-        </Border>
+            <ListView Background="Transparent" Margin="3"
+                      BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1"
+                      ItemsSource="{Binding DroppedItems}">
+                <ListView.View>
+                    <GridView>
+                        <GridView.ColumnHeaderContainerStyle>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+                        </GridView.ColumnHeaderContainerStyle>
+                        <GridView.Columns>
+                            <!--Column WillBeRename-->
+                            <GridViewColumn>
+                                <GridViewColumn.Header>
+                                    <Border VerticalAlignment="Center">
+                                        <CheckBox VerticalAlignment="Center" 
+                                                  VerticalContentAlignment="Center"
+                                                  />
+                                    </Border>
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border VerticalAlignment="Center">
+                                        <CheckBox IsChecked="{Binding WillBeApply}"
+                                                      VerticalAlignment="Center"
+                                                      VerticalContentAlignment="Center"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <!--Column Name-->
+                            <GridViewColumn >
+                                <GridViewColumn.Header>
+                                    <Border VerticalAlignment="Center">
+                                        <Label Content="Name"
+                                               Foreground="{StaticResource SolidBrushDark}"
+                                               VerticalAlignment="Center"
+                                               VerticalContentAlignment="Center"/>
+                                    </Border>
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border VerticalAlignment="Center">
+                                            <TextBlock VerticalAlignment="Center" Text="{Binding FullName}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <!--Column New name-->
+                            <GridViewColumn >
+                                <GridViewColumn.Header>
+                                    <Border VerticalAlignment="Center">
+                                        <Label Content="New name"
+                                               Foreground="{StaticResource SolidBrushTeal}"
+                                               VerticalAlignment="Center"
+                                               VerticalContentAlignment="Center"/>
+                                    </Border>
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{Binding NewFullName}"
+                                                   Foreground="{StaticResource SolidBrushTeal}"
+                                                   />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
     </DockPanel>
 </Window>

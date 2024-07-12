@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using RenameTool.ViewModel;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
@@ -38,6 +39,7 @@ namespace RenameTool
         public MainWindow()
         {
             InitializeComponent();
+            DroppedItems = new ObservableCollection<ViewItem>();
         }
 
         int cou = 0;
@@ -123,8 +125,6 @@ namespace RenameTool
             set { includeChildItems = value; OnPropertyChanged(nameof(IncludeChildItems)); }
         }
 
-
-
         private bool removeJunkSpace;
         public bool RemoveJunkSpace
         {
@@ -163,6 +163,9 @@ namespace RenameTool
             get { return ignoreCase; }
             set { ignoreCase = value; ValidateSearchPattern(); OnPropertyChanged(nameof(IgnoreCase)); }
         }
+
+        private ObservableCollection<ViewItem> droppedItems;
+        public ObservableCollection<ViewItem> DroppedItems { get => droppedItems; set { droppedItems = value; OnPropertyChanged(nameof(DroppedItems)); } }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -218,6 +221,12 @@ namespace RenameTool
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             SaveSettings();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var item = new ViewItem(@"D:\Z.ItemsTest\Z.Thu muc goc - Rootfolder");
+            DroppedItems.Add(item);
         }
     }
 }

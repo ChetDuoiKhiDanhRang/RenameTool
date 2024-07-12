@@ -16,6 +16,7 @@
     <Color x:Key="CxLightBlue">#0f9ed5</Color>
     <Color x:Key="CxLightRed">#ff4f4f</Color>
     <Color x:Key="CxLightOrange">#e96733</Color>
+    <Color x:Key="CxLightGrey">#D9D9D9</Color>
 
     <Color x:Key="CxDark">#0a0c0d</Color>
     <Color x:Key="CxLight">#f3f3f3</Color>

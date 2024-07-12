@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RenameTool.ViewModel
 {
-    internal class ViewItem : INotifyPropertyChanged, INotifyDataErrorInfo
+    public class ViewItem : INotifyPropertyChanged, INotifyDataErrorInfo
     {
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -22,13 +22,34 @@ namespace RenameTool.ViewModel
         }
 
         public Item _Item { get; set; }
-        public Item Parent { get => _Item.Parent; private set => _Item.Parent=value; }
+
+        public bool IsFile { get => _Item.IsFile; set { _Item.IsFile = value; OnPropertyChanged(nameof(IsFile)); } }
+        public int RootLevel { get => _Item.RootLevel; set { _Item.RootLevel = value; OnPropertyChanged(nameof(RootLevel)); } }
+        public int Level { get => _Item.Level; set { _Item.Level = value; OnPropertyChanged(nameof(Level)); } }
+        public bool WillBeApply { get => _Item.WillBeApply; set { _Item.WillBeApply = value; OnPropertyChanged(nameof(WillBeApply)); } }
+
 
         public string Name { get => _Item.Name; set { _Item.Name = value; OnPropertyChanged(nameof(Name)); } }    
         public string Extension { get => _Item.Extension; set { _Item.Extension = value; OnPropertyChanged(nameof(Extension)); } }    
-        public string Location { get => _Item.Location; set { _Item.Location = value; OnPropertyChanged(nameof(Location)); } }    
-        public string FullName { get => _Item.GetFullName(); } //set { OnPropertyChanged(nameof(FullName)); } }
-        public string NewFullName { get => _Item.NewFullName; set { _Item.NewFullName = value; ValidateNewName(); OnPropertyChanged(nameof(FullName)); } }
+        public string Location { get => _Item.Location; set { _Item.Location = value; OnPropertyChanged(nameof(Location)); } }
+
+        public string NewName { get => _Item.NewName; set { _Item.NewName = value; ValidateNewName(); OnPropertyChanged(nameof(FullName));  } }
+
+        public string NewExtension { get => _Item.NewExtension; set { _Item.NewExtension = value; ValidateNewName(); OnPropertyChanged(nameof(FullName)); } }
+
+        public string FullName { get => _Item.FullName; } //set { OnPropertyChanged(nameof(FullName)); } }
+        public string NewFullName { get => _Item.NewFullName;}
+
+        public string FullPath { get => _Item.GetFullPath(); }
+
+        public ViewItem()
+        {
+
+        }
+        public ViewItem(string FullPath)
+        {
+            _Item = new Item(FullPath);
+        }
 
         //Implement INotifyDataErrorInfo
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
