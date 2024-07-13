@@ -13,16 +13,16 @@ namespace RenameTool.Model
         public string Location { get; set; }
         public bool WillBeApply { get; set; }
         public bool IsFile { get; set; }
-        public int RootLevel { get; set; }
-        public int Level { get; set; }
+        public int RootLevel { get; set; } = 0;
+        public int Level { get; set; } = 0;
 
         public string Name { get; set; }
         public string Extension { get; set; }
         public string FullName { get => Name + Extension; }
 
 
-        public string NewName { get; set; } = "zzz";
-        public string NewExtension { get; set; } = ".xxx";
+        public string NewName { get; set; }// = "zzz";
+        public string NewExtension { get; set; }// = ".xxx";
         public string NewFullName { get => NewName + NewExtension; }
         public Item(string FullPath)
         {
@@ -45,6 +45,7 @@ namespace RenameTool.Model
             while (str.Contains(@"\\")) { str = str.Replace(@"\\", @"\"); }
             str = str.EndsWith('\\') ? str.Remove(str.Length - 1) : str;
             Level = str.Count<char>(x => x == '\\');
+            RootLevel = Level;
         }
 
         public string GetFullName() { return Name + Extension; }

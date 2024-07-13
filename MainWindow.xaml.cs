@@ -2,17 +2,9 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace RenameTool
 {
@@ -40,7 +32,11 @@ namespace RenameTool
         {
             InitializeComponent();
             DroppedItems = new ObservableCollection<ViewItem>();
+            DroppedItems.CollectionChanged += DroppedItems_CollectionChanged;
+            DeclareItems = new ObservableCollection<ViewItem>();
         }
+
+
 
         int cou = 0;
         public int Cou { get => cou; set => cou = value; }
@@ -133,7 +129,6 @@ namespace RenameTool
         }
 
         private bool toBaseASCII;
-
         public bool ToBaseASCII
         {
             get { return toBaseASCII; }
@@ -141,7 +136,6 @@ namespace RenameTool
         }
 
         private NameOrExtension targetPart;
-
         public NameOrExtension TargetPart
         {
             get { return targetPart; }
@@ -149,7 +143,6 @@ namespace RenameTool
         }
 
         private TextFormattings switchCases;
-
         public TextFormattings SwitchCases
         {
             get { return switchCases; }
@@ -157,7 +150,6 @@ namespace RenameTool
         }
 
         private bool ignoreCase;
-
         public bool IgnoreCase
         {
             get { return ignoreCase; }
@@ -166,6 +158,19 @@ namespace RenameTool
 
         private ObservableCollection<ViewItem> droppedItems;
         public ObservableCollection<ViewItem> DroppedItems { get => droppedItems; set { droppedItems = value; OnPropertyChanged(nameof(DroppedItems)); } }
+
+        private void DroppedItems_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(DroppedItems));
+        }
+
+        private ObservableCollection<ViewItem> declareItems;
+        public ObservableCollection<ViewItem> DeclareItems
+        {
+            get { return declareItems; }
+            set { declareItems = value; OnPropertyChanged(nameof(DeclareItems)); }
+        }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -182,8 +187,34 @@ namespace RenameTool
 
         public void OnPropertyChanged(string propertyName)
         {
+            if (propertyName == nameof(DroppedItems) || propertyName == nameof(DroppedItems) || propertyName == nameof(IncludeChildItems))
+            {
+                Cou++;
+                DeclareItems?.Clear();
+                foreach (var item in DroppedItems)
+                {
+                    DeclareItems.Add(new ViewItem(item.FullPath));
+                    if (IncludeChildItems && !item.IsFile)
+                    {
+                        List<ViewItem> list = new List<ViewItem>();
+                        var liF = Directory.EnumerateFiles(item.FullPath, "*", SearchOption.AllDirectories).ToList<string>();
+                        liF.Sort();
+                        var liD = Directory.EnumerateDirectories(item.FullPath, "*", SearchOption.AllDirectories).ToList();
+                        liD.Sort();
+                        foreach (var i in liF) { list.Add(new ViewItem(i) { RootLevel = item.Level + item.RootLevel }); }
+                        foreach (var i in liD) { list.Add(new ViewItem(i) { RootLevel = item.Level + item.RootLevel }); }
+                        list.Sort();
+                        foreach (var i in list)
+                        {
+                            DeclareItems.Add((ViewItem)i);
+                        }
+                    }
+                }
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         public Dictionary<string, List<string>> errors { get; set; } = new Dictionary<string, List<string>>();
 
         private void SaveSettings()
@@ -225,8 +256,50 @@ namespace RenameTool
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var item = new ViewItem(@"D:\Z.ItemsTest\Z.Thu muc goc - Rootfolder");
+            var item = new ViewItem(@"D:\Z.ItemsTest");
             DroppedItems.Add(item);
+        }
+
+        private void Window_PreviewDragEnter(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+        }
+
+        private void Window_PreviewDrop(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+            var x = e.Data.GetData(DataFormats.FileDrop);
+            if (x != null)
+            {
+                DroppedItems.Clear();
+                List<ViewItem> listFiles = new List<ViewItem>();
+                List<ViewItem> listFolders = new List<ViewItem>();
+                foreach (var item in x as IEnumerable<string>)
+                {
+                    ViewItem i = new ViewItem(item);
+                    if (i.IsFile)
+                    {
+                        listFiles.Add(i);
+                    }
+                    else { listFolders.Add(i); }
+                }
+                listFiles.Sort();
+                listFolders.Sort();
+                foreach (var item in listFiles)
+                {
+                    DroppedItems.Add((ViewItem)item);
+                }
+                foreach (var item in listFolders)
+                {
+                    DroppedItems.Add((ViewItem)item);
+                }
+            }
+        }
+
+        private void Window_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = DragDropEffects.Copy;
+
         }
     }
 }

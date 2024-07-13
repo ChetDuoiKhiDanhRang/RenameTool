@@ -12,12 +12,18 @@
         FontSize="12"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
+        PreviewDragEnter="Window_PreviewDragEnter"
+        PreviewDragOver="Window_PreviewDragOver"
+        PreviewDrop="Window_PreviewDrop"
+        AllowDrop="True"
         >
     <Window.Resources>
         <assistClasses:Bool2Visibility x:Key="Bool2Visibility"/>
         <assistClasses:Bool2FontWeight x:Key="Bool2FontWeight"/>
         <assistClasses:TextFormatting2String x:Key="TextFormatting2String"/>
         <assistClasses:TargetPart2String x:Key="TargetPart2String"/>
+        <assistClasses:Bool2Image x:Key="Bool2Image"/>
+        <assistClasses:Level2Margin x:Key="Level2Margin"/>
         <Style x:Key="AutoBoldCheckBox" TargetType="CheckBox">
             <Style.Triggers>
                 <Trigger Property="IsChecked" Value="True">
@@ -158,10 +164,14 @@
 
         <Grid DockPanel.Dock="Bottom" Height="32" Background="AntiqueWhite"></Grid>
 
-        <StackPanel Grid.Column="0" Margin="3" DockPanel.Dock="Left" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" Margin="3,0,0,5" Height="Auto">
-                <Label Name="lblTextFormatting" Content="Text format:" Foreground="{StaticResource SolidBrushDark}"/>
-                <ComboBox Name="cmbSwitchCase" 
+        <DockPanel Grid.Column="0" Margin="3" DockPanel.Dock="Top" >
+            <DockPanel DockPanel.Dock="Left" Margin="3,0,0,5" LastChildFill="False">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                    <Label Name="lblTextFormatting" Content="Text format:" 
+                           HorizontalAlignment="Left"
+                           HorizontalContentAlignment="Left"
+                           Foreground="{StaticResource SolidBrushDark}"/>
+                    <ComboBox Name="cmbSwitchCase" 
                               Foreground="{StaticResource SolidBrushDark}" 
                               FontWeight="SemiBold"
                               VerticalContentAlignment="Center"
@@ -169,12 +179,14 @@
                               Width="{Binding ElementName=cmbTargetPart, Path=ActualWidth}"
                               ItemsSource="{Binding ListTextFormattings}"
                               SelectedItem="{Binding SwitchCases, Converter={StaticResource TextFormatting2String}}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="3,0,0,5" Height="Auto">
-                <Label Content="Target part:" 
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,3,0,0">
+                    <Label Content="Target part:" 
+                           HorizontalAlignment="Left"
+                           HorizontalContentAlignment="Left"
                            Width="{Binding ElementName=lblTextFormatting, Path=ActualWidth}"
                            Foreground="{StaticResource SolidBrushDark}"/>
-                <ComboBox Name="cmbTargetPart" 
+                    <ComboBox Name="cmbTargetPart" 
                               Foreground="{StaticResource SolidBrushDark}" 
                               FontWeight="SemiBold"
                               VerticalContentAlignment="Center"
@@ -182,94 +194,109 @@
                               Width="130"
                               ItemsSource="{Binding ListTargetParts}"
                               SelectedItem="{Binding TargetPart, Converter={StaticResource TargetPart2String}}"/>
-            </StackPanel>
-
-            <CheckBox x:Name="ckbRemoveJunkSpaces" 
+                </StackPanel>
+            </DockPanel>
+            <StackPanel Width="180" Orientation="Vertical" DockPanel.Dock="Left" Margin="10,0,0,5">
+                <CheckBox x:Name="ckbRemoveJunkSpaces" 
                    Style="{StaticResource AutoBoldCheckBox}"
                    Margin="3,3,3,5" IsChecked="{Binding RemoveJunkSpace}" 
                    Content="Remove junk spaces" Background="Transparent"/>
-            <CheckBox x:Name="ckbChildItems" 
+                <CheckBox x:Name="ckbChildItems" 
                    Style="{StaticResource AutoBoldCheckBox}"
                    Margin="3,3,3,5" IsChecked="{Binding IncludeChildItems}" 
                    Content="Include child items" Background="Transparent"/>
-            <CheckBox Margin="3,3,3,5" IsChecked="{Binding ToBaseASCII}" 
+                <CheckBox Margin="3,3,3,5" IsChecked="{Binding ToBaseASCII}" 
                    x:Name="ckbToBaseASCII"
                    Style="{StaticResource AutoBoldCheckBox}"
                    Content="Có dấu → Khong dau" Background="Transparent"/>
-            <Button Background="DeepSkyBlue" Content="ACFFD" Click="Button_Click"/>
-        </StackPanel>
+            </StackPanel>
+            <Button Background="DeepSkyBlue" Width="200"
+                    Margin="0,3,3,3" DockPanel.Dock="Left"
+                    Content="ACFFD" Click="Button_Click"/>
+            <TextBlock Background="DarkCyan" Margin="3" Text="Item info"/>
+        </DockPanel>
 
-            <ListView Background="Transparent" Margin="3"
+        <ListView Background="Transparent" Margin="3"
                       BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1"
-                      ItemsSource="{Binding DroppedItems}">
-                <ListView.View>
-                    <GridView>
-                        <GridView.ColumnHeaderContainerStyle>
-                            <Style TargetType="GridViewColumnHeader">
-                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            </Style>
-                        </GridView.ColumnHeaderContainerStyle>
-                        <GridView.Columns>
-                            <!--Column WillBeRename-->
-                            <GridViewColumn>
-                                <GridViewColumn.Header>
-                                    <Border VerticalAlignment="Center">
-                                        <CheckBox VerticalAlignment="Center" 
+                      ItemsSource="{Binding DeclareItems}">
+            <ListView.View>
+                <GridView>
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style TargetType="GridViewColumnHeader">
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
+                    <GridView.Columns>
+                        <!--Column WillBeRename-->
+                        <GridViewColumn>
+                            <GridViewColumn.Header>
+                                <Border VerticalAlignment="Center">
+                                    <CheckBox VerticalAlignment="Center" 
                                                   VerticalContentAlignment="Center"
                                                   />
-                                    </Border>
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border VerticalAlignment="Center">
+                                </Border>
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border VerticalAlignment="Center">
                                         <CheckBox IsChecked="{Binding WillBeApply}"
                                                       VerticalAlignment="Center"
                                                       VerticalContentAlignment="Center"/>
-                                        </Border>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <!--Column Name-->
-                            <GridViewColumn >
-                                <GridViewColumn.Header>
-                                    <Border VerticalAlignment="Center">
-                                        <Label Content="Name"
-                                               Foreground="{StaticResource SolidBrushDark}"
+                                    </Border>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <!--Column Name-->
+                        <GridViewColumn >
+                            <GridViewColumn.Header>
+                                <Border VerticalAlignment="Center">
+                                    <Label Content="Name"
+                                               Foreground="{StaticResource SolidBrushDarkBlue}"
                                                VerticalAlignment="Center"
                                                VerticalContentAlignment="Center"/>
-                                    </Border>
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border VerticalAlignment="Center">
-                                            <TextBlock VerticalAlignment="Center" Text="{Binding FullName}"/>
-                                        </Border>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <!--Column New name-->
-                            <GridViewColumn >
-                                <GridViewColumn.Header>
-                                    <Border VerticalAlignment="Center">
-                                        <Label Content="New name"
+                                </Border>
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <Image DockPanel.Dock="Left" 
+                                               Width="16" Height="16"
+                                               Source="{Binding IsFile, Converter={StaticResource Bool2Image}}"
+                                               Margin="{Binding Level, Converter={StaticResource Level2Margin}}"
+                                               VerticalAlignment="Center">
+                                        </Image>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource SolidBrushDarkBlue}"
+                                                   ToolTip="{Binding Level}"
+                                                   Text="{Binding FullName}"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <!--Column New name-->
+                        <GridViewColumn >
+                            <GridViewColumn.Header>
+                                <Border VerticalAlignment="Center">
+                                    <Label Content="New name"
                                                Foreground="{StaticResource SolidBrushTeal}"
                                                VerticalAlignment="Center"
                                                VerticalContentAlignment="Center"/>
-                                    </Border>
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock VerticalAlignment="Center"
+                                </Border>
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
                                                    Text="{Binding NewFullName}"
-                                                   Foreground="{StaticResource SolidBrushTeal}"
-                                                   />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView.Columns>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{StaticResource SolidBrushTeal}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </DockPanel>
 </Window>
