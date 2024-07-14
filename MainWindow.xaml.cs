@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
+using BaseTools;
 
 namespace RenameTool
 {
@@ -187,32 +188,141 @@ namespace RenameTool
 
         public void OnPropertyChanged(string propertyName)
         {
-            if (propertyName == nameof(DroppedItems) || propertyName == nameof(DroppedItems) || propertyName == nameof(IncludeChildItems))
+            if (propertyName == nameof(DroppedItems) || propertyName == nameof(DeclareItems) || propertyName == nameof(IncludeChildItems))
             {
                 Cou++;
                 DeclareItems?.Clear();
                 foreach (var item in DroppedItems)
                 {
-                    DeclareItems.Add(new ViewItem(item.FullPath));
+                    item.MyMainWindow = this;
+                    DeclareItems.Add(item);
                     if (IncludeChildItems && !item.IsFile)
                     {
-                        List<ViewItem> list = new List<ViewItem>();
-                        var liF = Directory.EnumerateFiles(item.FullPath, "*", SearchOption.AllDirectories).ToList<string>();
-                        liF.Sort();
-                        var liD = Directory.EnumerateDirectories(item.FullPath, "*", SearchOption.AllDirectories).ToList();
-                        liD.Sort();
-                        foreach (var i in liF) { list.Add(new ViewItem(i) { RootLevel = item.Level + item.RootLevel }); }
-                        foreach (var i in liD) { list.Add(new ViewItem(i) { RootLevel = item.Level + item.RootLevel }); }
-                        list.Sort();
-                        foreach (var i in list)
-                        {
-                            DeclareItems.Add((ViewItem)i);
-                        }
+                        TraversePath(item.FullPath, DeclareItems, item.Level + item.RootLevel);
                     }
                 }
             }
 
+            if (!HasErrors)
+            {
+                GenerateNewName();
+            }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        void GenerateNewName()
+        {
+            if (DeclareItems == null || DeclareItems.Count == 0 || HasErrors) { return; }
+            Parallel.ForEach<ViewItem>(DeclareItems, new Action<ViewItem>(GenerateItemNewName));
+        }
+
+        internal void GenerateItemNewName(ViewItem item)
+        {
+            if (!item.WillBeApply) return;
+            string target = "";
+
+            item.NewName = item.Name;
+            item.NewExtension = item.Extension;
+
+            switch (TargetPart)
+            {
+                case NameOrExtension.NameOnly:
+                    target = item.Name;
+                    break;
+                case NameOrExtension.ExtensionOnly:
+                    target = item.Extension;
+                    break;
+                case NameOrExtension.NameAndExtension:
+                    target = item.FullName;
+                    break;
+                default:
+                    target = item.Name;
+                    break;
+            }
+            switch (SwitchCases)
+            {
+                case TextFormattings.None:
+                    break;
+                case TextFormattings.LowerCase:
+                    target = target.ToLower();
+                    break;
+                case TextFormattings.UpperCase:
+                    target = target.ToUpper();
+                    break;
+                case TextFormattings.TitleCase:
+                    target = StringHandler.Proper(target);
+                    break;
+                default:
+                    break;
+            }
+
+            if (ToBaseASCII)
+            {
+                target = StringHandler.BaseASCII(target);
+            }
+
+            if (RemoveJunkSpace)
+            {
+                target = StringHandler.RemoveJunkSpaces(target);
+            }
+
+            if (SearchPattern!="")
+            {
+                if (UseRegex)
+                {
+                    Regex reg = new Regex(SearchPattern, IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                    foreach (Match match in reg.Matches(target))
+                    {
+                        if (match.Value != "") target = target.Replace(match.Value, ReplaceWith);
+                    }
+                }
+                else { target = target.Replace(SearchPattern, ReplaceWith); } 
+            }
+
+            switch (TargetPart)
+            {
+                case NameOrExtension.NameOnly:
+                    item.NewName = target;
+                    break;
+                case NameOrExtension.ExtensionOnly:
+                    if (item.IsFile)
+                    {
+                        item.NewExtension = target;
+                    }
+                    break;
+                case NameOrExtension.NameAndExtension:
+                    if (item.IsFile)
+                    {
+                        item.NewExtension = target.Substring(target.LastIndexOf('.'));
+                        item.NewName = target.Substring(0, target.LastIndexOf("."));
+                    }
+                    else
+                    {
+                        item.NewName = target;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        private void TraversePath(string fullPath, ObservableCollection<ViewItem> declareItems, int rootLevel)
+        {
+            var files = Directory.EnumerateFiles(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
+            var subfolders = Directory.EnumerateDirectories(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
+
+            files.Sort();
+            subfolders.Sort();
+
+
+            foreach (var file in files) { declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this }); }
+            foreach (var subfolder in subfolders)
+            {
+                declareItems.Add(new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this });
+                TraversePath(subfolder, declareItems, rootLevel);
+            }
         }
 
         public Dictionary<string, List<string>> errors { get; set; } = new Dictionary<string, List<string>>();
@@ -287,11 +397,11 @@ namespace RenameTool
                 listFolders.Sort();
                 foreach (var item in listFiles)
                 {
-                    DroppedItems.Add((ViewItem)item);
+                    DroppedItems.Add(item);
                 }
                 foreach (var item in listFolders)
                 {
-                    DroppedItems.Add((ViewItem)item);
+                    DroppedItems.Add(item);
                 }
             }
         }

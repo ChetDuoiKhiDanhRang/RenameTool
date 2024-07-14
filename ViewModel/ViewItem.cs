@@ -13,11 +13,24 @@ namespace RenameTool.ViewModel
 {
     public class ViewItem : INotifyPropertyChanged, INotifyDataErrorInfo, IComparable<ViewItem>
     {
+        internal MainWindow MyMainWindow { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnPropertyChanged(string propertyName)
         {
+            if (propertyName == nameof(WillBeApply))
+            {
+                if (WillBeApply)
+                {
+                    MyMainWindow?.GenerateItemNewName(this);
+                }
+                else
+                {
+                    _Item.NewExtension = _Item.Extension;
+                    NewName = Name;
+                }
+            }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
@@ -33,19 +46,30 @@ namespace RenameTool.ViewModel
         public string Extension { get => _Item.Extension; set { _Item.Extension = value; OnPropertyChanged(nameof(Extension)); } }
         public string Location { get => _Item.Location; set { _Item.Location = value; OnPropertyChanged(nameof(Location)); } }
 
-        public string NewName { get => _Item.NewName; set { _Item.NewName = value; ValidateNewName(); OnPropertyChanged(nameof(NewFullName)); } }
+        public string NewName
+        {
+            get => _Item.NewName; set
+            {
+                if (_Item.NewName != value)
+                {
+                    _Item.NewName = value; ValidateNewName(); OnPropertyChanged(nameof(NewFullName)); 
+                } } }
 
-        public string NewExtension { get => _Item.NewExtension; set { _Item.NewExtension = value; ValidateNewName(); OnPropertyChanged(nameof(NewFullName)); } }
+        public string NewExtension
+        {
+            get => _Item.NewExtension; set
+            {
+                if (_Item.NewExtension != value)
+                {
+                    _Item.NewExtension = value; ValidateNewName(); 
+                    OnPropertyChanged(nameof(NewFullName)); 
+                } } }
 
         public string FullName { get => _Item.FullName; } //set { OnPropertyChanged(nameof(FullName)); } }
         public string NewFullName { get => _Item.NewFullName; }
 
         public string FullPath { get => _Item.GetFullPath(); }
 
-        public ViewItem()
-        {
-
-        }
         public ViewItem(string FullPath)
         {
             _Item = new Item(FullPath);

@@ -165,7 +165,7 @@
         <Grid DockPanel.Dock="Bottom" Height="32" Background="AntiqueWhite"></Grid>
 
         <DockPanel Grid.Column="0" Margin="3" DockPanel.Dock="Top" >
-            <DockPanel DockPanel.Dock="Left" Margin="3,0,0,5" LastChildFill="False">
+            <DockPanel DockPanel.Dock="Left" Margin="0,0,0,5" LastChildFill="False">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <Label Name="lblTextFormatting" Content="Text format:" 
                            HorizontalAlignment="Left"
@@ -196,10 +196,10 @@
                               SelectedItem="{Binding TargetPart, Converter={StaticResource TargetPart2String}}"/>
                 </StackPanel>
             </DockPanel>
-            <StackPanel Width="180" Orientation="Vertical" DockPanel.Dock="Left" Margin="10,0,0,5">
+            <StackPanel Width="180" Orientation="Vertical" DockPanel.Dock="Left" Margin="10,3,0,5">
                 <CheckBox x:Name="ckbRemoveJunkSpaces" 
                    Style="{StaticResource AutoBoldCheckBox}"
-                   Margin="3,3,3,5" IsChecked="{Binding RemoveJunkSpace}" 
+                   Margin="3,0,3,5" IsChecked="{Binding RemoveJunkSpace}" 
                    Content="Remove junk spaces" Background="Transparent"/>
                 <CheckBox x:Name="ckbChildItems" 
                    Style="{StaticResource AutoBoldCheckBox}"
@@ -213,10 +213,11 @@
             <Button Background="DeepSkyBlue" Width="200"
                     Margin="0,3,3,3" DockPanel.Dock="Left"
                     Content="ACFFD" Click="Button_Click"/>
-            <TextBlock Background="DarkCyan" Margin="3" Text="Item info"/>
+            <TextBlock Background="DarkCyan" Margin="3,3,0,3" Text="Item info"/>
         </DockPanel>
 
         <ListView Background="Transparent" Margin="3"
+                  SelectedItem=""
                       BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1"
                       ItemsSource="{Binding DeclareItems}">
             <ListView.View>

@@ -30,7 +30,7 @@ namespace RenameTool.Model
             if (File.Exists(FullPath))
             {
                 IsFile = true;
-                Name = Path.GetFileNameWithoutExtension(FullPath);
+                Name = NewName = Path.GetFileNameWithoutExtension(FullPath);
                 Extension = NewExtension = Path.GetExtension(FullPath);
             }
             else
