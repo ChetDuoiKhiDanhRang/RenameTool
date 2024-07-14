@@ -9,7 +9,6 @@
         Title="RenameTool" Height="600" Width="1024"
         Icon="imgs\ico.ico"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        FontSize="12"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         PreviewDragEnter="Window_PreviewDragEnter"
@@ -267,7 +266,7 @@
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <DockPanel>
+                                    <DockPanel Margin="0,2,0,2" >
                                         <Image DockPanel.Dock="Left" 
                                                Width="16" Height="16"
                                                Source="{Binding IsFile, Converter={StaticResource Bool2Image}}"
