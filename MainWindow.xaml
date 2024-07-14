@@ -157,12 +157,16 @@
                 VerticalAlignment="Top" Background="{StaticResource SolidBrushLight}">
                 <TextBox x:Name="txbReplaceWith" HorizontalContentAlignment="Center"
                          CaretBrush="{StaticResource SolidBrushDarkTeal}"
-                     Style="{StaticResource invalidTextBox}"
-                     Text="{Binding ReplaceWith, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+                         Style="{StaticResource invalidTextBox}"
+                         Text="{Binding ReplaceWith, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
             </Border>
         </Grid>
 
-        <Grid DockPanel.Dock="Bottom" Height="32" Background="AntiqueWhite"></Grid>
+        <Border DockPanel.Dock="Bottom" Margin="3" Height="32" CornerRadius="5" Background="{StaticResource SolidBrushTeal}">
+            <Grid>
+                
+            </Grid>
+        </Border>
 
         <DockPanel Grid.Column="0" Margin="3" DockPanel.Dock="Top" >
             <DockPanel DockPanel.Dock="Left" Margin="0,0,0,5" LastChildFill="False">
@@ -234,8 +238,11 @@
                             <GridViewColumn.Header>
                                 <Border VerticalAlignment="Center">
                                     <CheckBox VerticalAlignment="Center" 
-                                                  VerticalContentAlignment="Center"
-                                                  />
+                                              VerticalContentAlignment="Center"
+                                              IsChecked="{x:Null}"
+                                              Checked="CheckBox_Checked"
+                                              Unchecked="CheckBox_Unchecked"
+                                              />
                                 </Border>
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
@@ -253,9 +260,9 @@
                             <GridViewColumn.Header>
                                 <Border VerticalAlignment="Center">
                                     <Label Content="Name"
-                                               Foreground="{StaticResource SolidBrushDarkBlue}"
-                                               VerticalAlignment="Center"
-                                               VerticalContentAlignment="Center"/>
+                                           Foreground="{StaticResource SolidBrushDarkBlue}"
+                                           VerticalAlignment="Center"
+                                           VerticalContentAlignment="Center"/>
                                 </Border>
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
@@ -268,9 +275,9 @@
                                                VerticalAlignment="Center">
                                         </Image>
                                         <TextBlock VerticalAlignment="Center"
-                                                   FontWeight="SemiBold"
+                                                   FontWeight="{Binding WillBeApply, Converter={StaticResource Bool2FontWeight}}"
                                                    Foreground="{StaticResource SolidBrushDarkBlue}"
-                                                   ToolTip="{Binding Level}"
+                                                   ToolTip="{Binding Location}"
                                                    Text="{Binding FullName}"/>
                                     </DockPanel>
                                 </DataTemplate>
@@ -289,9 +296,9 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
-                                                   Text="{Binding NewFullName}"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{StaticResource SolidBrushTeal}"/>
+                                               FontWeight="{Binding WillBeApply, Converter={StaticResource Bool2FontWeight}}"
+                                               Text="{Binding NewFullName}"
+                                               Foreground="{StaticResource SolidBrushTeal}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

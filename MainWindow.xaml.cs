@@ -267,17 +267,28 @@ namespace RenameTool
                 target = StringHandler.RemoveJunkSpaces(target);
             }
 
-            if (SearchPattern!="")
+            if (SearchPattern != "")
             {
                 if (UseRegex)
                 {
-                    Regex reg = new Regex(SearchPattern, IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
-                    foreach (Match match in reg.Matches(target))
+                    if (SearchPattern == @"$")
                     {
-                        if (match.Value != "") target = target.Replace(match.Value, ReplaceWith);
+                        target = target + ReplaceWith;
+                    }
+                    else if (SearchPattern == @"^")
+                    {
+                        target = ReplaceWith + target;
+                    }
+                    else
+                    {
+                        Regex reg = new Regex(SearchPattern, IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                        foreach (Match match in reg.Matches(target))
+                        {
+                            if (match.Value != "") target = target.Replace(match.Value, ReplaceWith);
+                        }
                     }
                 }
-                else { target = target.Replace(SearchPattern, ReplaceWith); } 
+                else { target = target.Replace(SearchPattern, ReplaceWith); }
             }
 
             switch (TargetPart)
@@ -409,6 +420,17 @@ namespace RenameTool
         private void Window_PreviewDragOver(object sender, DragEventArgs e)
         {
             e.Effects = DragDropEffects.Copy;
+
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            Parallel.ForEach<ViewItem>(DeclareItems, item => { item.WillBeApply = true; });
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Parallel.ForEach<ViewItem>(DeclareItems, item => { item.WillBeApply = false; });
 
         }
     }
