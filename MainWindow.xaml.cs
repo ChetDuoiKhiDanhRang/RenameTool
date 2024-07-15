@@ -6,6 +6,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using BaseTools;
+using System.Reflection;
+using System.Security.Principal;
 
 namespace RenameTool
 {
@@ -33,14 +35,13 @@ namespace RenameTool
         {
             InitializeComponent();
             DroppedItems = new ObservableCollection<ViewItem>();
-            DroppedItems.CollectionChanged += DroppedItems_CollectionChanged;
+            //DroppedItems.CollectionChanged += DroppedItems_CollectionChanged;
             DeclareItems = new ObservableCollection<ViewItem>();
+            string info = "RenameTool ver" + Assembly.GetExecutingAssembly().GetName().Version;
+            info += "; Framework: " + AppContext.TargetFrameworkName;
+            info += "; Running as: " + Environment.UserName;
+            lblInfo.Text = info;
         }
-
-
-
-        int cou = 0;
-        public int Cou { get => cou; set => cou = value; }
 
         public List<string> ListTextFormattings
         {
@@ -186,12 +187,13 @@ namespace RenameTool
             return errors[propertyName];
         }
 
+        private int maxLevel;
         public void OnPropertyChanged(string propertyName)
         {
             if (propertyName == nameof(DroppedItems) || propertyName == nameof(DeclareItems) || propertyName == nameof(IncludeChildItems))
             {
-                Cou++;
                 DeclareItems?.Clear();
+                maxLevel = 0;
                 foreach (var item in DroppedItems)
                 {
                     item.MyMainWindow = this;
@@ -213,7 +215,7 @@ namespace RenameTool
 
         void GenerateNewName()
         {
-            if (DeclareItems == null || DeclareItems.Count == 0 || HasErrors) { return; }
+            if (DeclareItems == null || DeclareItems.Count == 0) { return; }
             Parallel.ForEach<ViewItem>(DeclareItems, new Action<ViewItem>(GenerateItemNewName));
         }
 
@@ -267,7 +269,7 @@ namespace RenameTool
                 target = StringHandler.RemoveJunkSpaces(target);
             }
 
-            if (SearchPattern != "")
+            if (SearchPattern != "" && !HasErrors)
             {
                 if (UseRegex)
                 {
@@ -328,10 +330,15 @@ namespace RenameTool
             subfolders.Sort();
 
 
-            foreach (var file in files) { declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this }); }
+            foreach (var file in files)
+            {
+                declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this });
+            }
             foreach (var subfolder in subfolders)
             {
-                declareItems.Add(new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this });
+                var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this };
+                maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
+                declareItems.Add(folderItem);
                 TraversePath(subfolder, declareItems, rootLevel);
             }
         }
@@ -341,7 +348,7 @@ namespace RenameTool
         private void SaveSettings()
         {
             var x = Properties.Settings.Default;
-            x.SearchPattern = SearchPattern;
+            x.SearchPattern =SearchPattern;
             x.UseRegex = UseRegex;
             x.IgnoreCase = IgnoreCase;
             x.ReplaceWith = ReplaceWith;
@@ -354,11 +361,11 @@ namespace RenameTool
         private void LoadSettings()
         {
             var x = Properties.Settings.Default;
-            SearchPattern = x.SearchPattern;
+            SearchPattern = (x.SearchPattern == "\r\n                ") ?"":x.SearchPattern;
             UseRegex = x.UseRegex;
             IgnoreCase = x.IgnoreCase;
             IncludeChildItems = x.IncludeChildItems;
-            ReplaceWith = x.ReplaceWith;
+            ReplaceWith = (x.ReplaceWith == "\r\n                ") ?"":x.ReplaceWith;
             TargetPart = (NameOrExtension)x.TargetPart;
             RemoveJunkSpace = x.RemoveJunkSpace;
             ToBaseASCII = x.ToBaseASCII;
@@ -375,10 +382,59 @@ namespace RenameTool
             SaveSettings();
         }
 
+        string logs = "";
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var item = new ViewItem(@"D:\Z.ItemsTest");
-            DroppedItems.Add(item);
+            logs = "";
+            Parallel.ForEach<ViewItem>(DeclareItems.Where(x => x.IsFile && x.WillBeApply), new Action<ViewItem>(RenameFileItem));
+            for (int i = maxLevel; i >= 0; i--)
+            {
+                var filterList = DeclareItems.Where(x => !x.IsFile && x.WillBeApply && x.Level == i).ToList();
+                List<Task> tasks = new List<Task>();
+                foreach (var folder in filterList)
+                {
+                    tasks.Add(Task.Factory.StartNew(new Action<object?>(RenameFolder), folder));
+                }
+                Task.WaitAll(tasks.ToArray());
+            }
+            OnPropertyChanged(nameof(DroppedItems));
+
+            File.AppendAllText(Path.Combine(AppContext.BaseDirectory, "ErrorLog.txt"), logs);
+        }
+
+        private void RenameFolder(object? item)
+        {
+            if (item == null) return;
+            var folder = item as ViewItem; if (folder == null) return;
+            try
+            {
+                if (folder.NewFullName != folder.FullName)
+                {
+                    Directory.Move(folder.FullPath, Path.Combine(folder.Location, folder.NewName));
+                    folder.Name = folder.NewName;
+                }
+            }
+            catch (Exception e)
+            {
+                logs += e.ToString();
+            }
+        }
+
+        private void RenameFileItem(ViewItem item)
+        {
+            try
+            {
+                if (item.NewFullName != item.FullName)
+                {
+                    File.Move(item.FullPath, Path.Combine(item.Location, item.NewFullName));
+                    item.Name = item.NewName;
+                    item.Extension = item.NewExtension;
+                }
+            }
+            catch (Exception e)
+            {
+                logs += e.Message;
+            }
         }
 
         private void Window_PreviewDragEnter(object sender, DragEventArgs e)
@@ -414,6 +470,7 @@ namespace RenameTool
                 {
                     DroppedItems.Add(item);
                 }
+                OnPropertyChanged(nameof(DroppedItems));
             }
         }
 
@@ -422,6 +479,8 @@ namespace RenameTool
             e.Effects = DragDropEffects.Copy;
 
         }
+
+
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -432,6 +491,15 @@ namespace RenameTool
         {
             Parallel.ForEach<ViewItem>(DeclareItems, item => { item.WillBeApply = false; });
 
+        }
+
+        private void ckbIntegrade2ContextMenu_Checked(object sender, RoutedEventArgs e)
+        {
+            string add2File = @"*\shell\Cxx-RenameTool";
+            string add2Directory = @"Directory\shell\Cxx-RenameTool";
+            string add2BackgroundContextMenu = @"Directory\background\shell\Cxx-RenameTool";
+
+            string appPath = Path.Combine(AppContext.BaseDirectory, "RenameTool.exe");
         }
     }
 }
