@@ -23,6 +23,7 @@
         <assistClasses:TargetPart2String x:Key="TargetPart2String"/>
         <assistClasses:Bool2Image x:Key="Bool2Image"/>
         <assistClasses:Level2Margin x:Key="Level2Margin"/>
+        <assistClasses:SelectedItem2String x:Key="SelectedItem2String"/>
 
         <Style x:Key="AutoBoldCheckBox" TargetType="CheckBox">
             <Style.Triggers>
@@ -169,11 +170,11 @@
                 <Image Height="16" Source=".\imgs\file.png" Margin="0,0,3,0" 
                        DockPanel.Dock="Left"
                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBlock DockPanel.Dock="Left" Margin="0,0,5,0" VerticalAlignment="Center" Text="abc"/>
+                <TextBlock Name="tbkFilesCount" DockPanel.Dock="Left" Margin="0,0,5,0" VerticalAlignment="Center" Text="abc"/>
                 <Image Height="16" Source=".\imgs\folder.png" Margin="0,0,3,0" 
                        DockPanel.Dock="Left"
                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="abc"/>
+                <TextBlock Name="tbkFoldersCount" DockPanel.Dock="Left" VerticalAlignment="Center" Text="abc"/>
                 <CheckBox DockPanel.Dock="Right" VerticalAlignment="Center" 
                           VerticalContentAlignment="Center"
                           Name="ckbIntegrade2ContextMenu" Content="Integrade to context menu"
@@ -234,16 +235,32 @@
                    Style="{StaticResource AutoBoldCheckBox}"
                    Content="Có dấu → Khong dau" Background="Transparent"/>
             </StackPanel>
-            <Button Background="DeepSkyBlue" Width="200"
-                    Margin="0,3,3,3" DockPanel.Dock="Left"
-                    Content="ACFFD" Click="Button_Click"/>
-            <TextBlock Background="DarkCyan" Margin="3,3,0,3" Text="Item info"/>
+
+            <Border 
+                    CornerRadius="5" Margin="0,3,3,3" Width="200"
+                    DockPanel.Dock="Left" Background="{StaticResource SolidBrushTeal}">
+                <Label
+                    Background="Transparent"
+                    VerticalAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Foreground="{StaticResource SolidBrushLight}"
+                    FontWeight="Bold"
+                    Content="Apply" MouseLeftButtonUp="Button_Click"/>
+            </Border>
+
+            <Border Margin="3,3,0,3" CornerRadius="5" Padding="3"
+                    BorderThickness="2" BorderBrush="{StaticResource SolidBrushDark}">
+                <TextBlock Background="Transparent" 
+                           Text="{Binding SelectedItem, Converter={StaticResource SelectedItem2String}}"/>
+            </Border>
         </DockPanel>
 
         <ListView Background="Transparent" Margin="3"
-                  SelectedItem=""
-                      BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1"
-                      ItemsSource="{Binding DeclareItems}">
+                  Name="lsvItems"
+                  SelectedItem="{Binding SelectedItem}"
+                  BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1">
+            <!--ItemsSource="{Binding DeclareItems}">-->
             <ListView.View>
                 <GridView>
                     <GridView.ColumnHeaderContainerStyle>
@@ -269,8 +286,9 @@
                                 <DataTemplate>
                                     <Border VerticalAlignment="Center">
                                         <CheckBox IsChecked="{Binding WillBeApply}"
-                                                      VerticalAlignment="Center"
-                                                      VerticalContentAlignment="Center"/>
+                                                  VerticalAlignment="Center"
+                                                  VerticalContentAlignment="Center"
+                                                  ToolTip="{Binding OrderString}"/>
                                     </Border>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>

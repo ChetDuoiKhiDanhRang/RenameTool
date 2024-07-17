@@ -30,7 +30,7 @@ namespace RenameTool.AssistClasses
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var val = (string)value;
-            if (val != null || val =="Name") { return NameOrExtension.NameOnly; }
+            if (val =="Name") { return NameOrExtension.NameOnly; }
             else if (val == "Extension") { return NameOrExtension.ExtensionOnly; }
             else if (val == "Name + Extension") { return NameOrExtension.NameAndExtension; }
             return NameOrExtension.NameOnly;

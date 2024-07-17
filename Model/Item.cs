@@ -16,6 +16,16 @@ namespace RenameTool.Model
         public int RootLevel { get; set; } = 0;
         public int Level { get; set; } = 0;
 
+        private string orderString;
+
+        public string OrderString
+        {
+            get { return orderString; }
+            set { orderString = value; }
+        }
+
+
+
         public string Name { get; set; }
         public string Extension { get; set; }
         public string FullName { get => Name + Extension; }

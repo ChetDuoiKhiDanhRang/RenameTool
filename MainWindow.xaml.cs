@@ -8,6 +8,7 @@ using System.Windows;
 using BaseTools;
 using System.Reflection;
 using System.Security.Principal;
+using System.Collections.Concurrent;
 
 namespace RenameTool
 {
@@ -34,9 +35,9 @@ namespace RenameTool
         public MainWindow()
         {
             InitializeComponent();
-            DroppedItems = new ObservableCollection<ViewItem>();
+            DroppedItems = new List<ViewItem>();
             //DroppedItems.CollectionChanged += DroppedItems_CollectionChanged;
-            DeclareItems = new ObservableCollection<ViewItem>();
+            DeclareItems = new List<ViewItem>();
             string info = "RenameTool ver" + Assembly.GetExecutingAssembly().GetName().Version;
             info += "; Framework: " + AppContext.TargetFrameworkName;
             info += "; Running as: " + Environment.UserName;
@@ -158,21 +159,27 @@ namespace RenameTool
             set { ignoreCase = value; ValidateSearchPattern(); OnPropertyChanged(nameof(IgnoreCase)); }
         }
 
-        private ObservableCollection<ViewItem> droppedItems;
-        public ObservableCollection<ViewItem> DroppedItems { get => droppedItems; set { droppedItems = value; OnPropertyChanged(nameof(DroppedItems)); } }
+        private List<ViewItem> droppedItems;
+        public List<ViewItem> DroppedItems { get => droppedItems; set { droppedItems = value; OnPropertyChanged(nameof(DroppedItems)); } }
 
         private void DroppedItems_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(DroppedItems));
         }
 
-        private ObservableCollection<ViewItem> declareItems;
-        public ObservableCollection<ViewItem> DeclareItems
+        private List<ViewItem> declareItems;
+        public List<ViewItem> DeclareItems
         {
             get { return declareItems; }
-            set { declareItems = value; OnPropertyChanged(nameof(DeclareItems)); }
+            set
+            {
+                declareItems = value;
+                ClickCount++;
+                OnPropertyChanged(nameof(DeclareItems));
+            }
         }
 
+        public int ClickCount { get; set; } = 0;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -187,22 +194,50 @@ namespace RenameTool
             return errors[propertyName];
         }
 
-        private int maxLevel;
-        public void OnPropertyChanged(string propertyName)
+        private ViewItem selectedItem;
+
+        public ViewItem SelectedItem
         {
-            if (propertyName == nameof(DroppedItems) || propertyName == nameof(DeclareItems) || propertyName == nameof(IncludeChildItems))
+            get { return selectedItem; }
+            set { selectedItem = value; OnPropertyChanged(nameof(SelectedItem)); }
+        }
+
+
+        private int maxLevel;
+        public async void OnPropertyChanged(string propertyName)
+        {
+            if ((propertyName == nameof(DroppedItems) || propertyName == nameof(DeclareItems) || propertyName == nameof(IncludeChildItems)) && DeclareItems != null)
             {
                 DeclareItems?.Clear();
+                lsvItems.ItemsSource = null;
                 maxLevel = 0;
                 foreach (var item in DroppedItems)
                 {
                     item.MyMainWindow = this;
                     DeclareItems.Add(item);
+                    var tmpList = new ConcurrentBag<ViewItem>();
                     if (IncludeChildItems && !item.IsFile)
                     {
-                        TraversePath(item.FullPath, DeclareItems, item.Level + item.RootLevel);
+                        await TraversePath(item.FullPath, tmpList, item.Level + item.RootLevel, item.OrderString);
+                        DeclareItems.AddRange(tmpList);
                     }
                 }
+
+                tbkFilesCount.Dispatcher.Invoke(() =>
+                {
+                    tbkFilesCount.Text = DeclareItems.Where(x => x.IsFile).Count().ToString();
+
+                });
+
+                tbkFoldersCount.Dispatcher.Invoke(() =>
+                {
+                    tbkFoldersCount.Text = DeclareItems.Where(x => !x.IsFile).Count().ToString();
+                });
+                Task.Run(() =>
+                {
+                    DeclareItems?.Sort();
+                    lsvItems.Dispatcher.Invoke(() => { lsvItems.ItemsSource = DeclareItems; });
+                });
             }
 
             if (!HasErrors)
@@ -210,13 +245,14 @@ namespace RenameTool
                 GenerateNewName();
             }
 
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         void GenerateNewName()
         {
             if (DeclareItems == null || DeclareItems.Count == 0) { return; }
-            Parallel.ForEach<ViewItem>(DeclareItems, new Action<ViewItem>(GenerateItemNewName));
+            Parallel.ForEach<ViewItem>(DeclareItems, (GenerateItemNewName));
         }
 
         internal void GenerateItemNewName(ViewItem item)
@@ -307,8 +343,8 @@ namespace RenameTool
                 case NameOrExtension.NameAndExtension:
                     if (item.IsFile)
                     {
-                        item.NewExtension = target.Substring(target.LastIndexOf('.'));
-                        item.NewName = target.Substring(0, target.LastIndexOf("."));
+                        item.NewExtension = target.LastIndexOf(".") < 0 ? "" : target.Substring(target.LastIndexOf('.'));
+                        item.NewName = (target.LastIndexOf(".") < 0 ? target : target.Substring(0, target.LastIndexOf(".")));
                     }
                     else
                     {
@@ -321,7 +357,7 @@ namespace RenameTool
 
         }
 
-        private void TraversePath(string fullPath, ObservableCollection<ViewItem> declareItems, int rootLevel)
+        private async Task TraversePath(string fullPath, ConcurrentBag<ViewItem> declareItems, int rootLevel, string parentOrderString)
         {
             var files = Directory.EnumerateFiles(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
             var subfolders = Directory.EnumerateDirectories(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
@@ -329,18 +365,28 @@ namespace RenameTool
             files.Sort();
             subfolders.Sort();
 
+            int fi_count = 0;
+            int fo_count = 0;
 
             foreach (var file in files)
             {
-                declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this });
+                fi_count++;
+                declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fi" + fi_count });
             }
+
+            var tasks = new List<Task>();
             foreach (var subfolder in subfolders)
             {
-                var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this };
-                maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
-                declareItems.Add(folderItem);
-                TraversePath(subfolder, declareItems, rootLevel);
+                fo_count++;
+                tasks.Add(Task.Factory.StartNew(async () =>
+                {
+                    var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fo" + fo_count };
+                    maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
+                    declareItems.Add(folderItem);
+                    await TraversePath(subfolder, declareItems, rootLevel, folderItem.OrderString);
+                }));
             }
+            Task.WaitAll(tasks.ToArray());
         }
 
         public Dictionary<string, List<string>> errors { get; set; } = new Dictionary<string, List<string>>();
@@ -348,7 +394,7 @@ namespace RenameTool
         private void SaveSettings()
         {
             var x = Properties.Settings.Default;
-            x.SearchPattern =SearchPattern;
+            x.SearchPattern = SearchPattern;
             x.UseRegex = UseRegex;
             x.IgnoreCase = IgnoreCase;
             x.ReplaceWith = ReplaceWith;
@@ -361,11 +407,11 @@ namespace RenameTool
         private void LoadSettings()
         {
             var x = Properties.Settings.Default;
-            SearchPattern = (x.SearchPattern == "\r\n                ") ?"":x.SearchPattern;
+            SearchPattern = (x.SearchPattern == "\r\n                ") ? "" : x.SearchPattern;
             UseRegex = x.UseRegex;
             IgnoreCase = x.IgnoreCase;
             IncludeChildItems = x.IncludeChildItems;
-            ReplaceWith = (x.ReplaceWith == "\r\n                ") ?"":x.ReplaceWith;
+            ReplaceWith = (x.ReplaceWith == "\r\n                ") ? "" : x.ReplaceWith;
             TargetPart = (NameOrExtension)x.TargetPart;
             RemoveJunkSpace = x.RemoveJunkSpace;
             ToBaseASCII = x.ToBaseASCII;
@@ -453,21 +499,31 @@ namespace RenameTool
                 List<ViewItem> listFolders = new List<ViewItem>();
                 foreach (var item in x as IEnumerable<string>)
                 {
-                    ViewItem i = new ViewItem(item);
+                    ViewItem i = new ViewItem(item) { };
                     if (i.IsFile)
                     {
+
                         listFiles.Add(i);
                     }
-                    else { listFolders.Add(i); }
+                    else
+                    {
+                        listFolders.Add(i);
+                    }
                 }
                 listFiles.Sort();
                 listFolders.Sort();
+                int fi_count = 0;
+                int fo_count = 0;
                 foreach (var item in listFiles)
                 {
+                    fi_count++;
+                    item.OrderString = "fi" + fi_count;
                     DroppedItems.Add(item);
                 }
                 foreach (var item in listFolders)
                 {
+                    fi_count++;
+                    item.OrderString = "fo" + fi_count;
                     DroppedItems.Add(item);
                 }
                 OnPropertyChanged(nameof(DroppedItems));

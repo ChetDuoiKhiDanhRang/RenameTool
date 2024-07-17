@@ -46,6 +46,15 @@ namespace RenameTool.ViewModel
         public string Extension { get => _Item.Extension; set { _Item.Extension = value; OnPropertyChanged(nameof(Extension)); } }
         public string Location { get => _Item.Location; set { _Item.Location = value; OnPropertyChanged(nameof(Location)); } }
 
+        private string orderString;
+
+        public string OrderString
+        {
+            get { return _Item.OrderString; }
+            set { _Item.OrderString = value; OnPropertyChanged(nameof(OrderString)); }
+        }
+
+
         public string NewName
         {
             get => _Item.NewName; set
@@ -99,26 +108,7 @@ namespace RenameTool.ViewModel
 
         public int CompareTo(ViewItem? other)
         {
-            if (this.IsFile == other.IsFile)
-            {
-                return this.FullPath.CompareTo(other.FullPath);
-            }
-            else if (this.IsFile && !other.IsFile)
-            {
-                if (other.FullPath.Contains(this.Location))
-                {
-                    return 1;
-                }
-            }
-            else if (!this.IsFile && other.IsFile)
-            {
-                if (this.FullPath.Contains(other.Location))
-                {
-                    return -1;
-                }
-            }
-
-            return 0;
+            return this.OrderString.CompareTo(other.OrderString);
         }
     }
 }
