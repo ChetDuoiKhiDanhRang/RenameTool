@@ -9,7 +9,7 @@
     <AssemblyVersion>2.1</AssemblyVersion>
     <ApplicationIcon>imgs\ico.ico</ApplicationIcon>
     <FileVersion>2.1</FileVersion>
-    <Version>$(VersionPrefix)2.1</Version>
+    <Version>$(VersionPrefix)</Version>
     <Title>RenameTool</Title>
   </PropertyGroup>
 
@@ -17,10 +17,6 @@
     <None Remove="imgs\file.png" />
     <None Remove="imgs\folder.png" />
     <None Remove="imgs\ico.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="imgs\ico.ico" />
   </ItemGroup>
 
   <ItemGroup>

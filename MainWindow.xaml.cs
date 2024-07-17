@@ -9,6 +9,8 @@ using BaseTools;
 using System.Reflection;
 using System.Security.Principal;
 using System.Collections.Concurrent;
+using System.Windows.Controls;
+using System.Diagnostics;
 
 namespace RenameTool
 {
@@ -369,7 +371,7 @@ namespace RenameTool
                 string count = i.ToString("000000");
                 tasks.Add(Task.Factory.StartNew(async () =>
                 {
-                    var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + $".fo{count}"};
+                    var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + $".fo{count}" };
                     maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
                     declareItems.Add(folderItem);
                     await TraversePath(subfolder, declareItems, rootLevel, folderItem.OrderString);
@@ -552,6 +554,16 @@ namespace RenameTool
             if (ClickCount == 21)
             {
                 MessageBox.Show("ÁDSAFDSDFS");
+            }
+        }
+
+        private void Label_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var lbl = sender as Label;
+            if (lbl != null)
+            {
+                string location = lbl.ToolTip.ToString();
+                if (location != null) { Process.Start(Environment.GetEnvironmentVariable("systemroot") + @"\explorer.exe", $"{location}"); }
             }
         }
     }

@@ -258,9 +258,9 @@
 
         <ListView Background="Transparent" Margin="3"
                   Name="lsvItems"
-                  SelectedItem="{Binding SelectedItem}"
                   ScrollViewer.IsDeferredScrollingEnabled="True"
-                  BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1">
+                  BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1"
+                  >
             <!--ItemsSource="{Binding DeclareItems}">-->
             <ListView.View>
                 <GridView>
@@ -313,11 +313,12 @@
                                                Margin="{Binding Level, Converter={StaticResource Level2Margin}}"
                                                VerticalAlignment="Center">
                                         </Image>
-                                        <TextBlock VerticalAlignment="Center"
+                                        <Label VerticalAlignment="Center"
                                                    FontWeight="{Binding WillBeApply, Converter={StaticResource Bool2FontWeight}}"
                                                    Foreground="{StaticResource SolidBrushDarkBlue}"
                                                    ToolTip="{Binding Location}"
-                                                   Text="{Binding FullName}"/>
+                                               MouseDoubleClick="Label_MouseDoubleClick"
+                                                   Content="{Binding FullName}"/>
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
