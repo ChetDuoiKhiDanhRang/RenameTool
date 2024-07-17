@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RenameTool"
         xmlns:assistClasses="clr-namespace:RenameTool.AssistClasses"
         mc:Ignorable="d"
-        Title="RenameTool" Height="600" Width="1024"
+        Title="RenameTool" Height="600" Width="800"
         Icon="imgs\ico.ico"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Loaded="Window_Loaded"
@@ -23,7 +23,6 @@
         <assistClasses:TargetPart2String x:Key="TargetPart2String"/>
         <assistClasses:Bool2Image x:Key="Bool2Image"/>
         <assistClasses:Level2Margin x:Key="Level2Margin"/>
-        <assistClasses:SelectedItem2String x:Key="SelectedItem2String"/>
 
         <Style x:Key="AutoBoldCheckBox" TargetType="CheckBox">
             <Style.Triggers>
@@ -162,7 +161,9 @@
                          Text="{Binding ReplaceWith, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
             </Border>
         </Grid>
-
+        
+        
+        <!--Status bar-->
         <Border DockPanel.Dock="Bottom" Margin="3" Height="32" CornerRadius="5"
                 BorderBrush="{StaticResource SolidBrushTeal}"
                 BorderThickness="2">
@@ -177,20 +178,24 @@
                 <TextBlock Name="tbkFoldersCount" DockPanel.Dock="Left" VerticalAlignment="Center" Text="abc"/>
                 <CheckBox DockPanel.Dock="Right" VerticalAlignment="Center" 
                           VerticalContentAlignment="Center"
+                          Style="{StaticResource AutoBoldCheckBox}"
+                          Margin="3"
                           Name="ckbIntegrade2ContextMenu" Content="Integrade to context menu"
                           Checked="ckbIntegrade2ContextMenu_Checked"
                           />
 
                 <TextBlock VerticalAlignment="Center"
-                       Name="lblInfo"
-                       HorizontalAlignment="Center"
+                           Name="lblInfo"
+                           HorizontalAlignment="Center"
                            FontWeight="SemiBold"
-                       Foreground="{StaticResource SolidBrushTeal}" />
+                           Foreground="{StaticResource SolidBrushTeal}"
+                           MouseDown="lblInfo_MouseDown"/>
             </DockPanel>
         </Border>
-
-        <DockPanel Grid.Column="0" Margin="3" DockPanel.Dock="Top" >
-            <DockPanel DockPanel.Dock="Left" Margin="0,0,0,5" LastChildFill="False">
+        
+        <!--Options pane-->
+        <DockPanel Grid.Column="0" Margin="3,0,3,3" DockPanel.Dock="Left" LastChildFill="False">
+            <DockPanel DockPanel.Dock="Top" Margin="3,0,3,5" LastChildFill="False">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <Label Name="lblTextFormatting" Content="Text format:" 
                            HorizontalAlignment="Left"
@@ -205,7 +210,7 @@
                               ItemsSource="{Binding ListTextFormattings}"
                               SelectedItem="{Binding SwitchCases, Converter={StaticResource TextFormatting2String}}"/>
                 </StackPanel>
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,3,0,0">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <Label Content="Target part:" 
                            HorizontalAlignment="Left"
                            HorizontalContentAlignment="Left"
@@ -221,7 +226,8 @@
                               SelectedItem="{Binding TargetPart, Converter={StaticResource TargetPart2String}}"/>
                 </StackPanel>
             </DockPanel>
-            <StackPanel Width="180" Orientation="Vertical" DockPanel.Dock="Left" Margin="10,3,0,5">
+            <StackPanel Orientation="Vertical" 
+                        DockPanel.Dock="Top" Margin="3,3,0,3">
                 <CheckBox x:Name="ckbRemoveJunkSpaces" 
                    Style="{StaticResource AutoBoldCheckBox}"
                    Margin="3,0,3,5" IsChecked="{Binding RemoveJunkSpace}" 
@@ -236,9 +242,9 @@
                    Content="Có dấu → Khong dau" Background="Transparent"/>
             </StackPanel>
 
-            <Border 
-                    CornerRadius="5" Margin="0,3,3,3" Width="200"
-                    DockPanel.Dock="Left" Background="{StaticResource SolidBrushTeal}">
+            <Border CornerRadius="5" Margin="3,3,3,3"
+                    Height="40"
+                    DockPanel.Dock="Top" Background="{StaticResource SolidBrushTeal}">
                 <Label
                     Background="Transparent"
                     VerticalAlignment="Stretch"
@@ -248,17 +254,12 @@
                     FontWeight="Bold"
                     Content="Apply" MouseLeftButtonUp="Button_Click"/>
             </Border>
-
-            <Border Margin="3,3,0,3" CornerRadius="5" Padding="3"
-                    BorderThickness="2" BorderBrush="{StaticResource SolidBrushDark}">
-                <TextBlock Background="Transparent" 
-                           Text="{Binding SelectedItem, Converter={StaticResource SelectedItem2String}}"/>
-            </Border>
         </DockPanel>
 
         <ListView Background="Transparent" Margin="3"
                   Name="lsvItems"
                   SelectedItem="{Binding SelectedItem}"
+                  ScrollViewer.IsDeferredScrollingEnabled="True"
                   BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1">
             <!--ItemsSource="{Binding DeclareItems}">-->
             <ListView.View>
@@ -271,7 +272,7 @@
                     </GridView.ColumnHeaderContainerStyle>
                     <GridView.Columns>
                         <!--Column WillBeRename-->
-                        <GridViewColumn>
+                        <GridViewColumn Width="Auto">
                             <GridViewColumn.Header>
                                 <Border VerticalAlignment="Center">
                                     <CheckBox VerticalAlignment="Center" 
@@ -294,7 +295,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <!--Column Name-->
-                        <GridViewColumn >
+                        <GridViewColumn Width="Auto">
                             <GridViewColumn.Header>
                                 <Border VerticalAlignment="Center">
                                     <Label Content="Name"

@@ -38,10 +38,10 @@ namespace RenameTool
             DroppedItems = new List<ViewItem>();
             //DroppedItems.CollectionChanged += DroppedItems_CollectionChanged;
             DeclareItems = new List<ViewItem>();
-            string info = "RenameTool ver" + Assembly.GetExecutingAssembly().GetName().Version;
-            info += "; Framework: " + AppContext.TargetFrameworkName;
-            info += "; Running as: " + Environment.UserName;
-            lblInfo.Text = info;
+            string AppInfo = "RenameTool ver" + Assembly.GetExecutingAssembly().GetName().Version;
+            AppInfo += "; Framework: " + AppContext.TargetFrameworkName;
+            AppInfo += "; Running as: " + Environment.UserName;
+            lblInfo.Text = AppInfo;
         }
 
         public List<string> ListTextFormattings
@@ -194,15 +194,6 @@ namespace RenameTool
             return errors[propertyName];
         }
 
-        private ViewItem selectedItem;
-
-        public ViewItem SelectedItem
-        {
-            get { return selectedItem; }
-            set { selectedItem = value; OnPropertyChanged(nameof(SelectedItem)); }
-        }
-
-
         private int maxLevel;
         public async void OnPropertyChanged(string propertyName)
         {
@@ -233,11 +224,8 @@ namespace RenameTool
                 {
                     tbkFoldersCount.Text = DeclareItems.Where(x => !x.IsFile).Count().ToString();
                 });
-                Task.Run(() =>
-                {
-                    DeclareItems?.Sort();
-                    lsvItems.Dispatcher.Invoke(() => { lsvItems.ItemsSource = DeclareItems; });
-                });
+                DeclareItems?.Sort();
+                lsvItems.Dispatcher.Invoke(() => { lsvItems.ItemsSource = DeclareItems; });
             }
 
             if (!HasErrors)
@@ -366,26 +354,28 @@ namespace RenameTool
             subfolders.Sort();
 
             int fi_count = 0;
-            int fo_count = 0;
 
             foreach (var file in files)
             {
                 fi_count++;
-                declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fi" + fi_count });
+                declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fi" + fi_count.ToString("000000") });
             }
 
             var tasks = new List<Task>();
-            foreach (var subfolder in subfolders)
+
+            for (int i = 0; i < subfolders.Count; i++)
             {
-                fo_count++;
+                var subfolder = subfolders[i];
+                string count = i.ToString("000000");
                 tasks.Add(Task.Factory.StartNew(async () =>
                 {
-                    var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fo" + fo_count };
+                    var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + $".fo{count}"};
                     maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
                     declareItems.Add(folderItem);
                     await TraversePath(subfolder, declareItems, rootLevel, folderItem.OrderString);
                 }));
             }
+
             Task.WaitAll(tasks.ToArray());
         }
 
@@ -517,13 +507,13 @@ namespace RenameTool
                 foreach (var item in listFiles)
                 {
                     fi_count++;
-                    item.OrderString = "fi" + fi_count;
+                    item.OrderString = "fi" + fi_count.ToString("000000");
                     DroppedItems.Add(item);
                 }
                 foreach (var item in listFolders)
                 {
-                    fi_count++;
-                    item.OrderString = "fo" + fi_count;
+                    fo_count++;
+                    item.OrderString = "fo" + fo_count.ToString("000000");
                     DroppedItems.Add(item);
                 }
                 OnPropertyChanged(nameof(DroppedItems));
@@ -535,8 +525,6 @@ namespace RenameTool
             e.Effects = DragDropEffects.Copy;
 
         }
-
-
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -556,6 +544,15 @@ namespace RenameTool
             string add2BackgroundContextMenu = @"Directory\background\shell\Cxx-RenameTool";
 
             string appPath = Path.Combine(AppContext.BaseDirectory, "RenameTool.exe");
+        }
+
+        private void lblInfo_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ClickCount++;
+            if (ClickCount == 21)
+            {
+                MessageBox.Show("ÁDSAFDSDFS");
+            }
         }
     }
 }

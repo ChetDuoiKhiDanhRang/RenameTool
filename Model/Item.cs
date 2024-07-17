@@ -56,6 +56,7 @@ namespace RenameTool.Model
             str = str.EndsWith('\\') ? str.Remove(str.Length - 1) : str;
             Level = str.Count<char>(x => x == '\\');
             RootLevel = Level;
+            OrderString = "";
         }
 
         public string GetFullName() { return Name + Extension; }
