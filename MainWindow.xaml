@@ -161,8 +161,8 @@
                          Text="{Binding ReplaceWith, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
             </Border>
         </Grid>
-        
-        
+
+
         <!--Status bar-->
         <Border DockPanel.Dock="Bottom" Margin="3" Height="32" CornerRadius="5"
                 BorderBrush="{StaticResource SolidBrushTeal}"
@@ -179,6 +179,7 @@
                 <CheckBox DockPanel.Dock="Right" VerticalAlignment="Center" 
                           VerticalContentAlignment="Center"
                           Style="{StaticResource AutoBoldCheckBox}"
+                          Visibility="Hidden"
                           Margin="3"
                           Name="ckbIntegrade2ContextMenu" Content="Integrade to context menu"
                           Checked="ckbIntegrade2ContextMenu_Checked"
@@ -192,9 +193,9 @@
                            MouseDown="lblInfo_MouseDown"/>
             </DockPanel>
         </Border>
-        
+
         <!--Options pane-->
-        <DockPanel Grid.Column="0" Margin="3,0,3,3" DockPanel.Dock="Left" LastChildFill="False">
+        <DockPanel Grid.Column="0" Margin="3,0,3,3" DockPanel.Dock="Left" LastChildFill="True">
             <DockPanel DockPanel.Dock="Top" Margin="3,0,3,5" LastChildFill="False">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <Label Name="lblTextFormatting" Content="Text format:" 
@@ -242,23 +243,36 @@
                    Content="Có dấu → Khong dau" Background="Transparent"/>
             </StackPanel>
 
+            <!--APPLY button-->
             <Border CornerRadius="5" Margin="3,3,3,3"
                     Height="40"
-                    DockPanel.Dock="Top" Background="{StaticResource SolidBrushTeal}">
+                    DockPanel.Dock="Top" 
+                    BorderBrush="{StaticResource SolidBrushDark}"
+                    BorderThickness="1"
+                    >
                 <Label
                     Background="Transparent"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Foreground="{StaticResource SolidBrushLight}"
+                    Foreground="{StaticResource SolidBrushDarkTeal}"
                     FontWeight="Bold"
                     Content="Apply" MouseLeftButtonUp="Button_Click"/>
             </Border>
+            <Border CornerRadius="5"
+                    Margin="3,3,3,0"
+                    MaxWidth="212"
+                    BorderThickness="1" BorderBrush="{StaticResource SolidBrushDark}">
+                <TextBox IsReadOnly="True" Background="Transparent"
+                         BorderBrush="Transparent" BorderThickness="0"
+                         Text="{Binding Logs}" TextWrapping="Wrap"/>
+            </Border>
+
         </DockPanel>
 
         <ListView Background="Transparent" Margin="3"
                   Name="lsvItems"
-                  ScrollViewer.IsDeferredScrollingEnabled="True"
+                  VirtualizingPanel.IsVirtualizing="True"
                   BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="1"
                   >
             <!--ItemsSource="{Binding DeclareItems}">-->
@@ -313,12 +327,12 @@
                                                Margin="{Binding Level, Converter={StaticResource Level2Margin}}"
                                                VerticalAlignment="Center">
                                         </Image>
-                                        <Label VerticalAlignment="Center"
-                                                   FontWeight="{Binding WillBeApply, Converter={StaticResource Bool2FontWeight}}"
-                                                   Foreground="{StaticResource SolidBrushDarkBlue}"
-                                                   ToolTip="{Binding Location}"
-                                               MouseDoubleClick="Label_MouseDoubleClick"
-                                                   Content="{Binding FullName}"/>
+                                        <TextBlock VerticalAlignment="Center"
+                                               FontWeight="{Binding WillBeApply, Converter={StaticResource Bool2FontWeight}}"
+                                               Foreground="{StaticResource SolidBrushDarkBlue}"
+                                               ToolTip="{Binding FullPath}"
+                                               Text="{Binding FullName}"
+                                               />
                                     </DockPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -335,7 +349,7 @@
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center"
+                                    <TextBlock VerticalAlignment="Center"
                                                FontWeight="{Binding WillBeApply, Converter={StaticResource Bool2FontWeight}}"
                                                Text="{Binding NewFullName}"
                                                Foreground="{StaticResource SolidBrushTeal}"/>

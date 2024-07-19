@@ -201,13 +201,13 @@ namespace RenameTool
         {
             if ((propertyName == nameof(DroppedItems) || propertyName == nameof(DeclareItems) || propertyName == nameof(IncludeChildItems)) && DeclareItems != null)
             {
-                DeclareItems?.Clear();
+                DeclareItems.Clear();
                 lsvItems.ItemsSource = null;
                 maxLevel = 0;
                 foreach (var item in DroppedItems)
                 {
                     item.MyMainWindow = this;
-                    DeclareItems.Add(item);
+                    DeclareItems?.Add(item);
                     var tmpList = new ConcurrentBag<ViewItem>();
                     if (IncludeChildItems && !item.IsFile)
                     {
@@ -349,36 +349,47 @@ namespace RenameTool
 
         private async Task TraversePath(string fullPath, ConcurrentBag<ViewItem> declareItems, int rootLevel, string parentOrderString)
         {
-            var files = Directory.EnumerateFiles(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
-            var subfolders = Directory.EnumerateDirectories(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
+            List<string> files = new List<string>();
+            List<string> subfolders = new List<string>();
 
-            files.Sort();
-            subfolders.Sort();
-
-            int fi_count = 0;
-
-            foreach (var file in files)
+            try
             {
-                fi_count++;
-                declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fi" + fi_count.ToString("000000") });
-            }
+                files = Directory.EnumerateFiles(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
+                subfolders = Directory.EnumerateDirectories(fullPath, "*", SearchOption.TopDirectoryOnly).ToList();
 
-            var tasks = new List<Task>();
 
-            for (int i = 0; i < subfolders.Count; i++)
-            {
-                var subfolder = subfolders[i];
-                string count = i.ToString("000000");
-                tasks.Add(Task.Factory.StartNew(async () =>
+                files.Sort();
+                subfolders.Sort();
+
+                int fi_count = 0;
+
+                foreach (var file in files)
                 {
-                    var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + $".fo{count}" };
-                    maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
-                    declareItems.Add(folderItem);
-                    await TraversePath(subfolder, declareItems, rootLevel, folderItem.OrderString);
-                }));
-            }
+                    fi_count++;
+                    declareItems.Add(new ViewItem(file) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + ".fi" + fi_count.ToString("000000") });
+                }
 
-            Task.WaitAll(tasks.ToArray());
+                var tasks = new List<Task>();
+
+                for (int i = 0; i < subfolders.Count; i++)
+                {
+                    var subfolder = subfolders[i];
+                    string count = i.ToString("000000");
+                    tasks.Add(Task.Factory.StartNew(async () =>
+                    {
+                        var folderItem = new ViewItem(subfolder) { RootLevel = rootLevel, MyMainWindow = this, OrderString = parentOrderString + $".fo{count}" };
+                        maxLevel = folderItem.Level > maxLevel ? folderItem.Level : maxLevel;
+                        declareItems.Add(folderItem);
+                        await TraversePath(subfolder, declareItems, rootLevel, folderItem.OrderString);
+                    }));
+                }
+
+                Task.WaitAll(tasks.ToArray());
+            }
+            catch (Exception e)
+            {
+                Logs = e.Message;
+            }
         }
 
         public Dictionary<string, List<string>> errors { get; set; } = new Dictionary<string, List<string>>();
@@ -420,10 +431,12 @@ namespace RenameTool
             SaveSettings();
         }
 
-        string logs = "";
+        string logs = "Drag/drop items to this window...";
+        public string Logs { get => logs; set { logs = value; OnPropertyChanged(nameof(Logs)); } }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            logs = "";
+            Logs = "";
             Parallel.ForEach<ViewItem>(DeclareItems.Where(x => x.IsFile && x.WillBeApply), new Action<ViewItem>(RenameFileItem));
             for (int i = maxLevel; i >= 0; i--)
             {
@@ -437,7 +450,9 @@ namespace RenameTool
             }
             OnPropertyChanged(nameof(DroppedItems));
 
-            File.AppendAllText(Path.Combine(AppContext.BaseDirectory, "ErrorLog.txt"), logs);
+            Logs = Logs.Length > 0 ? ("It's some error.\nClose other programs and try again\n" + Logs): "Done!";
+
+            File.AppendAllText(Path.Combine(AppContext.BaseDirectory, "ErrorLog.txt"), Logs);
         }
 
         private void RenameFolder(object? item)
@@ -454,7 +469,7 @@ namespace RenameTool
             }
             catch (Exception e)
             {
-                logs += e.ToString();
+                Logs += e.ToString();
             }
         }
 
@@ -471,7 +486,7 @@ namespace RenameTool
             }
             catch (Exception e)
             {
-                logs += e.Message;
+                Logs += e.Message;
             }
         }
 
