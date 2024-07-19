@@ -176,7 +176,6 @@ namespace RenameTool
             set
             {
                 declareItems = value;
-                ClickCount++;
                 OnPropertyChanged(nameof(DeclareItems));
             }
         }
@@ -568,17 +567,7 @@ namespace RenameTool
             ClickCount++;
             if (ClickCount == 21)
             {
-                MessageBox.Show("ÁDSAFDSDFS");
-            }
-        }
-
-        private void Label_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            var lbl = sender as Label;
-            if (lbl != null)
-            {
-                string location = lbl.ToolTip.ToString();
-                if (location != null) { Process.Start(Environment.GetEnvironmentVariable("systemroot") + @"\explorer.exe", $"{location}"); }
+                MessageBox.Show("https://github.com/ChetDuoiKhiDanhRang/RenameTool/releases", "RenameTool",MessageBoxButton.OK);
             }
         }
     }
