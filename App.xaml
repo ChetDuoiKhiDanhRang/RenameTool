@@ -10,6 +10,54 @@
             </ResourceDictionary.MergedDictionaries>
             <Image x:Key="FileIcon" Source=".\imgs\file.png"/>
             <Image x:Key="FolderIcon" Source=".\imgs\folder.png"/>
+            <Style x:Key="FreakButton" TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border BorderBrush="{StaticResource SolidBrushDark}" BorderThickness="2" 
+                                    CornerRadius="3">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Duration="0:0:0.3" To="{StaticResource CxTeal}"
+                                                                            Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Duration="0:0:0.3" To="{StaticResource CxBlue}"
+                                                                            Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.ExitActions>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Border.Background>
+                                    <RadialGradientBrush RadiusX="1" RadiusY="1.3">
+                                        <RadialGradientBrush.RelativeTransform>
+                                            <TranslateTransform X="-0.4" Y="-0.4"/>
+                                        </RadialGradientBrush.RelativeTransform>
+                                        <GradientStop Color="{StaticResource CxLight}" Offset="0"/>
+                                        <GradientStop Color="{StaticResource CxBlue}" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Border.Background>
+                                <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                                       Margin="3" Content="Apply" 
+                                       FontWeight="SemiBold" Background="Transparent" Foreground="{StaticResource SolidBrushDark}"/>
+
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -143,7 +143,7 @@
                    FontSize="10" FontStyle="Italic" FontWeight="SemiBold"
                    Visibility="{Binding ElementName=txbReplaceWith, Path=(Validation.HasError), Converter={StaticResource Bool2Visibility}}"
                    Text="{Binding ElementName=txbReplaceWith, Path=(Validation.Errors)[0].ErrorContent}"/>
-            <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
+            <Border CornerRadius="3" Margin="6,3,6,3" Height="27"
                 Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
                 VerticalAlignment="Top" Background="{StaticResource SolidBrushLight}">
                 <TextBox x:Name="txbSearchPattern" HorizontalContentAlignment="Center"
@@ -152,7 +152,7 @@
                          Text="{Binding SearchPattern, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
             </Border>
 
-            <Border CornerRadius="3" Margin="7,4,7,4" Height="25"
+            <Border CornerRadius="3" Margin="6,3,6,3" Height="27"
                 Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1"
                 VerticalAlignment="Top" Background="{StaticResource SolidBrushLight}">
                 <TextBox x:Name="txbReplaceWith" HorizontalContentAlignment="Center"
@@ -243,22 +243,26 @@
                    Content="Có dấu → Khong dau" Background="Transparent"/>
             </StackPanel>
 
-            <!--APPLY button-->
-            <Border CornerRadius="5" Margin="3,3,3,3"
+            <!--<Border CornerRadius="5" Margin="3,3,3,3"
                     Height="40"
                     DockPanel.Dock="Top" 
                     BorderBrush="{StaticResource SolidBrushDark}"
                     BorderThickness="1"
                     >
-                <Label
+                --><!--<Label
                     Background="Transparent"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Foreground="{StaticResource SolidBrushDarkTeal}"
                     FontWeight="Bold"
-                    Content="Apply" MouseLeftButtonUp="Button_Click"/>
-            </Border>
+                    Content="Apply" MouseLeftButtonUp="Button_Click"/>--><!--
+            </Border>-->
+            <!--APPLY button-->
+            <Button DockPanel.Dock="Top" Click="Button_Click" 
+                    Margin="3,3,3,3"
+                    Style="{StaticResource FreakButton}"/>
+            
             <Border CornerRadius="5"
                     Margin="3,3,3,0"
                     MaxWidth="212"

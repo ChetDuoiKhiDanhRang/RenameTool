@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>2.1</AssemblyVersion>
+    <AssemblyVersion>2.2</AssemblyVersion>
     <ApplicationIcon>imgs\ico.ico</ApplicationIcon>
-    <FileVersion>2.1</FileVersion>
+    <FileVersion>2.2</FileVersion>
     <Version>$(VersionPrefix)</Version>
     <Title>RenameTool</Title>
   </PropertyGroup>
@@ -22,9 +22,11 @@
   <ItemGroup>
     <Reference Include="BaseTools">
       <HintPath>..\CxxLibs\BaseTools\bin\Debug\netstandard2.1\BaseTools.dll</HintPath>
+      <Private></Private>
     </Reference>
     <Reference Include="WinAPIWrapper">
       <HintPath>..\CxxLibs\WinAPIWrapper\bin\Debug\netstandard2.1\WinAPIWrapper.dll</HintPath>
+      <Private></Private>
     </Reference>
   </ItemGroup>
 
