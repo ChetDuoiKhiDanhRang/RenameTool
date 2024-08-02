@@ -49,10 +49,48 @@
                                         <GradientStop Color="{StaticResource CxBlue}" Offset="1"/>
                                     </RadialGradientBrush>
                                 </Border.Background>
-                                <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                                       Margin="3" Content="Apply" 
-                                       FontWeight="SemiBold" Background="Transparent" Foreground="{StaticResource SolidBrushDark}"/>
-
+                                <Grid>
+                                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                                           Name="blurLabel"
+                                           Margin="3" Content="Apply" 
+                                           FontWeight="Bold" Background="Transparent" Foreground="{StaticResource SolidBrushDark}">
+                                    </Label>
+                                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                                           Margin="3" Content="Apply" 
+                                           FontWeight="Normal" Background="Transparent" Foreground="{StaticResource SolidBrushBlue}"
+                                           Opacity="0"
+                                           >
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0:0:0.3" To="4" 
+                                                                                     Storyboard.TargetProperty="(Label.Effect).(BlurEffect.Radius)"/>
+                                                                    <DoubleAnimation Duration="0:0:0.3" To="0.85" Storyboard.TargetProperty="Opacity"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.EnterActions>
+                                                        <Trigger.ExitActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0:0:0.3" To="0" 
+                                                                                     Storyboard.TargetProperty="(Label.Effect).(BlurEffect.Radius)"/>
+                                                                    <DoubleAnimation Duration="0:0:0.3" To="0" Storyboard.TargetProperty="Opacity"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.ExitActions>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                        <Label.Effect>
+                                            <BlurEffect RenderingBias="Quality" KernelType="Box" Radius="0"/>
+                                        </Label.Effect>
+                                    </Label>
+                                </Grid>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
