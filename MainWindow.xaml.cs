@@ -567,7 +567,7 @@ namespace RenameTool
             ClickCount++;
             if (ClickCount == 21)
             {
-                MessageBox.Show("https://github.com/ChetDuoiKhiDanhRang/RenameTool/releases", "RenameTool",MessageBoxButton.OK);
+                MessageBox.Show("https://github.com/ChetDuoiKhiDanhRang/RenameTool/releases", "RenameTool",MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

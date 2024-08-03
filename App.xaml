@@ -23,7 +23,7 @@
                                                 <Trigger.EnterActions>
                                                     <BeginStoryboard>
                                                         <Storyboard>
-                                                            <ColorAnimation Duration="0:0:0.3" To="{StaticResource CxTeal}"
+                                                            <ColorAnimation Duration="0:0:0.1" To="{StaticResource CxTeal}"
                                                                             Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
@@ -31,7 +31,7 @@
                                                 <Trigger.ExitActions>
                                                     <BeginStoryboard>
                                                         <Storyboard>
-                                                            <ColorAnimation Duration="0:0:0.3" To="{StaticResource CxBlue}"
+                                                            <ColorAnimation Duration="0:0:0.1" To="{StaticResource CxBlue}"
                                                                             Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
                                                         </Storyboard>
                                                     </BeginStoryboard>
@@ -53,42 +53,43 @@
                                     <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
                                            Name="blurLabel"
                                            Margin="3" Content="Apply" 
-                                           FontWeight="Bold" Background="Transparent" Foreground="{StaticResource SolidBrushDark}">
-                                    </Label>
-                                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                                           Margin="3" Content="Apply" 
-                                           FontWeight="Normal" Background="Transparent" Foreground="{StaticResource SolidBrushBlue}"
-                                           Opacity="0"
-                                           >
-                                        <Label.Style>
-                                            <Style TargetType="Label">
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Trigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Duration="0:0:0.3" To="4" 
-                                                                                     Storyboard.TargetProperty="(Label.Effect).(BlurEffect.Radius)"/>
-                                                                    <DoubleAnimation Duration="0:0:0.3" To="0.85" Storyboard.TargetProperty="Opacity"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </Trigger.EnterActions>
-                                                        <Trigger.ExitActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Duration="0:0:0.3" To="0" 
-                                                                                     Storyboard.TargetProperty="(Label.Effect).(BlurEffect.Radius)"/>
-                                                                    <DoubleAnimation Duration="0:0:0.3" To="0" Storyboard.TargetProperty="Opacity"/>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </Trigger.ExitActions>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Label.Style>
+                                           FontWeight="Bold" Opacity="0"
+                                           Background="Transparent" Foreground="{StaticResource SolidBrushLight}">
                                         <Label.Effect>
                                             <BlurEffect RenderingBias="Quality" KernelType="Box" Radius="0"/>
                                         </Label.Effect>
+                                    </Label>
+                                    <Label VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
+                                           Margin="3" Content="Apply" 
+                                           FontWeight="Bold" Background="Transparent" Foreground="{StaticResource SolidBrushDark}"
+                                           Opacity="1"
+                                           >
+                                        <Label.Triggers>
+                                            <EventTrigger RoutedEvent="Label.MouseEnter">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Duration="0:0:0.1" To="4"
+                                                                             Storyboard.TargetName="blurLabel"
+                                                                             Storyboard.TargetProperty="(Label.Effect).(BlurEffect.Radius)"/>
+                                                        <DoubleAnimation Duration="0:0:0.1" To="0.95" 
+                                                                             Storyboard.TargetName="blurLabel"
+                                                                             Storyboard.TargetProperty="Opacity"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                            <EventTrigger RoutedEvent="Label.MouseLeave">
+                                                <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation Duration="0:0:0.1" To="0" 
+                                                                             Storyboard.TargetName="blurLabel"
+                                                                             Storyboard.TargetProperty="(Label.Effect).(BlurEffect.Radius)"/>
+                                                            <DoubleAnimation Duration="0:0:0.1" To="0" 
+                                                                             Storyboard.TargetName="blurLabel"
+                                                                             Storyboard.TargetProperty="Opacity"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Label.Triggers>
                                     </Label>
                                 </Grid>
                             </Border>

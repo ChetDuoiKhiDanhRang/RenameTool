@@ -259,7 +259,8 @@
                     Content="Apply" MouseLeftButtonUp="Button_Click"/>--><!--
             </Border>-->
             <!--APPLY button-->
-            <Button DockPanel.Dock="Top" Click="Button_Click" 
+            <Button DockPanel.Dock="Top"
+                    Click="Button_Click"
                     Margin="3,3,3,3"
                     Style="{StaticResource FreakButton}"/>
             
